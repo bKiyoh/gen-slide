@@ -1,9 +1,9 @@
 import {
-  Color, DoubleSide, Mesh, MeshBasicMaterial, OrthographicCamera, Scene, WebGPURenderer,
+  Color, OrthographicCamera, Scene, WebGPURenderer,
 } from 'three/webgpu'
 import { LOGICAL_SIZE, validateShape } from '../../domain/shapes.js'
 import { fitCanvas } from '../fitCanvas.js'
-import { createShapeGeometry, updateShapeGeometry } from './geometryFactory.js'
+import { createShapeMeshes } from './shapeMeshes.js'
 
 /**
  * Vue からは init / updateShapes / dispose だけを呼ぶ。
@@ -17,7 +17,7 @@ export function createShapeRenderer(container, onStatus) {
   // left / right / top / bottom。カメラの投影だけで Y下向きを実現する。
   const camera = new OrthographicCamera(0, LOGICAL_SIZE.width, 0, LOGICAL_SIZE.height, 0.1, 100)
   camera.position.z = 10
-  const meshes = new Map()
+  const shapeMeshes = createShapeMeshes(scene)
   let renderer = null
   let resizeObserver = null
   let initTask = null
@@ -63,35 +63,7 @@ export function createShapeRenderer(container, onStatus) {
     }
     if (disposed || failed || !renderer?.initialized) return
 
-    for (const [id, mesh] of meshes) {
-      if (!ids.has(id)) {
-        scene.remove(mesh)
-        mesh.geometry.dispose()
-        mesh.material.dispose()
-        meshes.delete(id)
-      }
-    }
-
-    shapes.forEach((shape, index) => {
-      let mesh = meshes.get(shape.id)
-      if (!mesh) {
-        const material = new MeshBasicMaterial({
-          // Y反転投影でも面の向きによる欠落を防ぐ。透明度と重なりは配列順で扱う。
-          side: DoubleSide, transparent: true, depthTest: false, depthWrite: false, toneMapped: false,
-        })
-        material.forceSinglePass = true
-        mesh = new Mesh(createShapeGeometry(shape.geometry), material)
-        meshes.set(shape.id, mesh)
-        scene.add(mesh)
-      } else {
-        updateShapeGeometry(mesh.geometry, shape.geometry)
-      }
-      mesh.position.set(shape.transform.x, shape.transform.y, 0)
-      mesh.rotation.z = shape.transform.rotation * Math.PI / 180
-      mesh.material.color.set(shape.style.color)
-      mesh.material.opacity = shape.style.opacity
-      mesh.renderOrder = index
-    })
+    shapeMeshes.update(shapes)
     render()
   }
 
@@ -106,11 +78,7 @@ export function createShapeRenderer(container, onStatus) {
     if (releaseTask) return releaseTask
     releaseTask = (async () => {
       detach()
-      for (const mesh of meshes.values()) {
-        mesh.geometry.dispose()
-        mesh.material.dispose()
-      }
-      meshes.clear()
+      shapeMeshes.dispose()
       scene.clear()
       if (renderer) {
         // dispose後の contextlost / device lost 通知で Vue を更新しない。
@@ -154,7 +122,7 @@ export function createShapeRenderer(container, onStatus) {
         if (renderer.backend.isWebGPUBackend === true) backend = 'WebGPU'
         else if (renderer.backend.isWebGLBackend === true) backend = 'WebGL2'
 
-        renderer.domElement.setAttribute('aria-label', '赤い長方形と青い平行四辺形のプレビュー')
+        renderer.domElement.setAttribute('aria-label', '図形のプレビュー')
         renderer.domElement.setAttribute('role', 'img')
         container.appendChild(renderer.domElement)
         updateShapes(shapes)

@@ -8,6 +8,7 @@ export function createShapeGeometry(geometryData) {
   geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
   geometry.setIndex(indices)
   geometry.computeBoundingSphere()
+  geometry.userData.shapeGeometry = { ...geometryData }
   return geometry
 }
 
@@ -16,9 +17,12 @@ export function createShapeGeometry(geometryData) {
  * @param {import('../../domain/shapes.js').Shape['geometry']} geometryData
  */
 export function updateShapeGeometry(geometry, geometryData) {
+  const previous = geometry.userData.shapeGeometry
+  if (previous && ['type', 'width', 'height', 'skewX'].every(key => previous[key] === geometryData[key])) return
   const { positions } = calculateShapeGeometry(geometryData)
   const attribute = geometry.getAttribute('position')
   attribute.array.set(positions)
   attribute.needsUpdate = true
   geometry.computeBoundingSphere()
+  geometry.userData.shapeGeometry = { ...geometryData }
 }

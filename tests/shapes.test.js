@@ -43,3 +43,23 @@ test('透明度の両端と小文字HEXを受け入れる', () => {
     assert.deepEqual(validateShape(shape), [])
   }
 })
+
+test('scaleの省略/0/負数は有効、不正scaleと描画行列は拒否する', () => {
+  const shape = createSampleShapes()[0]
+  delete shape.transform.scaleX
+  delete shape.transform.scaleY
+  assert.deepEqual(validateShape(shape), [])
+  shape.transform.scaleX = 0
+  shape.transform.scaleY = -1
+  shape.worldMatrix = [1, 0, 0, 1, 0, 0]
+  assert.deepEqual(validateShape(shape), [])
+  for (const scale of [null, NaN, Infinity, 101, '1']) {
+    shape.transform.scaleX = scale
+    assert.ok(validateShape(shape).length)
+  }
+  shape.transform.scaleX = 1
+  for (const matrix of [[1, 2], [1, 0, 0, 1, NaN, 0], Array(6), {}]) {
+    shape.worldMatrix = matrix
+    assert.ok(validateShape(shape).length)
+  }
+})

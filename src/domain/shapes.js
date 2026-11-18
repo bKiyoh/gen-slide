@@ -1,9 +1,12 @@
 /**
  * @typedef {Object} Shape
  * @property {string} id
+ * @property {'shape'} [kind]
  * @property {{type: 'rectangle'|'parallelogram', width: number, height: number, skewX: number}} geometry
  * @property {{color: string, opacity: number}} style
- * @property {{x: number, y: number, rotation: number}} transform
+ * @property {{x: number, y: number, rotation: number, scaleX?: number, scaleY?: number}} transform
+ * @property {Array} [tracks]
+ * @property {number[]} [worldMatrix] 評価済み2Dアフィン変換 [a,b,c,d,tx,ty]
  */
 
 export const LOGICAL_SIZE = Object.freeze({ width: 1920, height: 1080 })
@@ -16,6 +19,8 @@ export const SHAPE_LIMITS = Object.freeze({
   x: { min: -19200, max: 19200 },
   y: { min: -10800, max: 10800 },
   rotation: { min: -360, max: 360 },
+  scaleX: { min: -100, max: 100 },
+  scaleY: { min: -100, max: 100 },
   opacity: { min: 0, max: 1 },
 })
 
@@ -24,15 +29,19 @@ export function createSampleShapes() {
   return [
     {
       id: 'rectangle',
+      kind: 'shape',
       geometry: { type: 'rectangle', width: 580, height: 340, skewX: 0 },
       style: { color: '#FF0000', opacity: 1 },
-      transform: { x: 560, y: 540, rotation: 0 },
+      transform: { x: 560, y: 540, rotation: 0, scaleX: 1, scaleY: 1 },
+      tracks: [],
     },
     {
       id: 'parallelogram',
+      kind: 'shape',
       geometry: { type: 'parallelogram', width: 520, height: 340, skewX: 28 },
       style: { color: '#0000FF', opacity: 1 },
-      transform: { x: 1320, y: 540, rotation: 0 },
+      transform: { x: 1320, y: 540, rotation: 0, scaleX: 1, scaleY: 1 },
+      tracks: [],
     },
   ]
 }
@@ -53,11 +62,9 @@ export function validateShape(shape) {
     width: shape.geometry?.width,
     height: shape.geometry?.height,
     skewX: shape.geometry?.skewX,
-    x: shape.transform?.x,
-    y: shape.transform?.y,
-    rotation: shape.transform?.rotation,
     opacity: shape.style?.opacity,
   }
+  errors.push(...validateTransform(shape.transform))
   for (const [key, value] of Object.entries(values)) {
     const { min, max } = SHAPE_LIMITS[key]
     if (!Number.isFinite(value) || value < min || value > max) {
@@ -69,6 +76,24 @@ export function validateShape(shape) {
   }
   if (typeof shape.style?.color !== 'string' || !/^#[0-9a-f]{6}$/i.test(shape.style.color)) {
     errors.push('color は #RRGGBB 形式で指定してください。')
+  }
+  if (shape.tracks !== undefined && !Array.isArray(shape.tracks)) errors.push('tracks は配列で指定してください。')
+  if (shape.worldMatrix !== undefined && (!Array.isArray(shape.worldMatrix)
+    || shape.worldMatrix.length !== 6 || !Array.from(shape.worldMatrix).every(Number.isFinite))) {
+    errors.push('worldMatrix は6個の有限な数値で指定してください。')
+  }
+  return errors
+}
+
+/** Phase 0 のデータでは省略された scale を1として扱う。 */
+export function validateTransform(transform) {
+  const errors = []
+  for (const key of ['x', 'y', 'rotation', 'scaleX', 'scaleY']) {
+    const value = key.startsWith('scale') && transform?.[key] === undefined ? 1 : transform?.[key]
+    const { min, max } = SHAPE_LIMITS[key]
+    if (!Number.isFinite(value) || value < min || value > max) {
+      errors.push(`${key} は ${min}〜${max} の有限な数値で指定してください。`)
+    }
   }
   return errors
 }
