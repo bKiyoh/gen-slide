@@ -10,12 +10,12 @@ function checkShape(shape) {
 }
 
 /**
- * Transition の静的評価。Vue/Three/DOM非依存。入力のtracks等は保持し、評価しない。
+ * 親変換前の静的評価。Vue/Three/DOM非依存。入力のtracks等は保持し、評価しない。
  * Template移動をローカルオフセットとして生成位置に加算する。
  * @param {{layers: Array}} transition
  * @returns {{shapes: import('../shapes.js').Shape[]}}
  */
-export function resolveStaticShapes(transition) {
+export function resolveLocalShapes(transition) {
   if (!Array.isArray(transition?.layers)) throw new RangeError('Transition.layers は配列が必要です。')
   const ids = new Set()
   let total = 0
@@ -35,7 +35,7 @@ export function resolveStaticShapes(transition) {
     if (layer.kind === 'shape') {
       checkShape(layer)
       shapes.push({ id: layer.id, geometry: { ...layer.geometry }, style: { ...layer.style },
-        transform: { ...layer.transform }, worldMatrix: composeShapeMatrix(layer.transform) })
+        transform: { ...layer.transform } })
       continue
     }
     const errors = validateTransform(layer.transform)
@@ -55,9 +55,16 @@ export function resolveStaticShapes(transition) {
       const modified = applyModifiers(base, modifiers, index, positions.length)
       const shape = applyOverride(modified, overrides[itemId])
       checkShape(shape)
-      shapes.push({ ...shape, groupId: layer.id, itemId, index,
-        worldMatrix: composeShapeMatrix(shape.transform, layer.transform) })
+      shapes.push({ ...shape, groupId: layer.id, itemId, index })
     }
   }
   return { shapes }
+}
+
+/** Phase 1互換の静的API。親合成はローカル状態が確定した後に一度だけ行う。 */
+export function resolveStaticShapes(transition) {
+  const { shapes } = resolveLocalShapes(transition)
+  const groups = new Map(transition.layers.filter(layer => layer.kind === 'group').map(group => [group.id, group]))
+  return { shapes: shapes.map(shape => ({ ...shape,
+    worldMatrix: composeShapeMatrix(shape.transform, groups.get(shape.groupId)?.transform) })) }
 }

@@ -5,6 +5,8 @@ import { createShapeMeshes } from '../src/renderer/three/shapeMeshes.js'
 import { createSampleShapes } from '../src/domain/shapes.js'
 import { resolveStaticShapes } from '../src/domain/transition/resolveStaticShapes.js'
 import { createSampleTransition } from '../src/domain/transition/sampleTransition.js'
+import { createSampleAnimatedTransition } from '../src/domain/transition/sampleAnimatedTransition.js'
+import { evaluateTransition } from '../src/domain/transition/evaluateTransition.js'
 
 test('Mesh同期: IDで再利用、未変更頂点は更新せず、色/形状変更と配列順を反映', () => {
   const scene = new Scene()
@@ -79,4 +81,34 @@ test('Mesh行列: 評価済み親子変換を一度だけ適用し、Phase 0へ�
   assert.equal(mesh.matrixWorld.elements[12], 560)
   assert.equal(mesh.matrixWorld.elements[13], 540)
   meshes.dispose()
+})
+
+test('時刻変更: Mesh/Geometry/Materialを再利用し、移動と回転だけなら頂点を更新しない', () => {
+  const scene = new Scene()
+  const meshes = createShapeMeshes(scene)
+  const transition = createSampleAnimatedTransition()
+  meshes.update(evaluateTransition(transition, 0).shapes)
+  const originals = scene.children.map(mesh => ({ mesh, geometry: mesh.geometry, material: mesh.material,
+    version: mesh.geometry.getAttribute('position').version }))
+  let geometryDisposals = 0
+  let materialDisposals = 0
+  for (const { geometry, material } of originals) {
+    geometry.addEventListener('dispose', () => geometryDisposals++)
+    material.addEventListener('dispose', () => materialDisposals++)
+  }
+  for (const time of [400, 800, 0, 1200, 800]) {
+    meshes.update(evaluateTransition(transition, time).shapes)
+    scene.updateMatrixWorld()
+    for (const [index, original] of originals.entries()) {
+      assert.equal(scene.children[index], original.mesh)
+      assert.equal(original.mesh.geometry, original.geometry)
+      assert.equal(original.mesh.material, original.material)
+      assert.equal(original.geometry.getAttribute('position').version, original.version)
+    }
+  }
+  assert.equal(geometryDisposals, 0)
+  assert.equal(materialDisposals, 0)
+  meshes.dispose()
+  assert.equal(geometryDisposals, 11)
+  assert.equal(materialDisposals, 11)
 })
