@@ -4,6 +4,7 @@
 .presentation-heading, .presentation-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .presentation-heading .eyebrow { margin:0; }
 .presentation-counter { font-variant-numeric:tabular-nums; font-size:14px; color:#d9e4f4; }
+.presentation-transition-label { color:#d9e4f4; overflow-wrap:anywhere; }
 .presentation-footer { border-top:1px solid var(--ui-border); border-bottom:0; font-size:12px; color:var(--ui-muted); }
 .presentation-viewport { flex:1; min-height:0; min-width:0; display:grid; place-items:center; overflow:hidden; }
 .presentation-stage { position:relative; overflow:hidden; isolation:isolate; background:#f5f3ee; }

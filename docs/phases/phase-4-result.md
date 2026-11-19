@@ -4,7 +4,7 @@
 
 ## コミットと今回の範囲
 
-承認済みのPhase 3、暗転原因のcover表示、UI統一、関連する実装記録を `c7ac6ff`（feat: complete Phase 3 editor, persistence, and consistent UI）にコミットしました。Phase 4の変更はレビュー用に未コミットで残しています。
+承認済みのPhase 3、暗転原因のcover表示、UI統一、関連する実装記録を `c7ac6ff`（feat: complete Phase 3 editor, persistence, and consistent UI）にコミットしました。Phase 4は承認後、Phase 5着手前に `5dd86f9` へコミット済みです。
 
 今回の実装は、保存済みTransitionをVueスライド間で再生するPresentationです。スライド本文の本格的な編集、直接操作、Undo/Redo、Phase 5以降の機能は追加していません。
 

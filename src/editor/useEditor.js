@@ -7,6 +7,7 @@ import { evaluateTransition } from '../domain/transition/evaluateTransition.js'
 import { createPlaybackClock } from './playbackClock.js'
 import { createProjectStorage, readStoredProject } from './projectStorage.js'
 import { editBaseDisplay } from './displayValues.js'
+import { createProjectHistory } from './projectHistory.js'
 
 export function useEditor(initialProject) {
   const getStorage = () => window.localStorage
@@ -17,6 +18,8 @@ export function useEditor(initialProject) {
   const previewSlideId = ref(null)
   const previewSlide = computed(() => project.value.slides.find(slide => slide.id === previewSlideId.value) ?? null)
   const selection = ref(null)
+  const keySelection = ref(null)
+  const pickMode = ref('child')
   const scope = ref('shape')
   const mode = ref('base')
   const timeMs = ref(0)
@@ -25,6 +28,16 @@ export function useEditor(initialProject) {
   const storageBlocked = ref(restored.blocked)
   const saveStatus = ref({ state: restored.blocked ? 'error' : 'saved', message: restored.blocked ? '自動保存を保留中（元データ保護）' : '保存済み' })
   const pendingImport = shallowRef(null)
+  const history = createProjectHistory()
+  const historyState = ref(history.state())
+  const gestureActive = ref(false)
+  const gestureChanged = ref(false)
+  let gestureBase = null
+  let gestureHasError = false
+  let gestureSerial = 0
+  let gestureToken = null
+  const canUndo = computed(() => historyState.value.undoCount > 0 || gestureChanged.value)
+  const canRedo = computed(() => historyState.value.redoCount > 0 && !gestureActive.value)
   const transition = computed(() => project.value.transitions.find(t => t.id === transitionId.value))
   const layer = computed(() => transition.value?.layers.find(layer => layer.id === selection.value?.layerId))
   const persistence = createProjectStorage({ getStorage, blocked: restored.blocked, onStatus: status => { saveStatus.value = status } })
@@ -41,21 +54,33 @@ export function useEditor(initialProject) {
     renderShapes.value = state.shapes
   }, { immediate: true })
 
-  function commit(edit) {
+  function reconcile() {
+    if (previewSlideId.value) {
+      if (!previewSlide.value) selectTransition(project.value.transitions[0]?.id ?? '')
+      else if (transitionId.value !== (previewSlide.value.transitionId ?? '')) selectSlide(previewSlideId.value)
+    } else if (!transition.value) selectTransition(project.value.transitions[0]?.id ?? '')
+    if (selection.value && !layer.value) selection.value = null
+    if (keySelection.value) {
+      const key = keySelection.value
+      const target = transition.value?.layers.find(layer => layer.id === key.layerId)
+      const tracks = key.scope === 'child' ? target?.childAnimation?.tracks : key.scope === 'individual' ? target?.overrides?.[key.itemId]?.tracks : target?.tracks
+      if (!tracks?.find(track => track.property === key.property)?.keyframes.some(candidate => candidate.timeMs === key.timeMs)) keySelection.value = null
+    }
+    if (timeMs.value > (transition.value?.durationMs ?? 0)) clock.seek(transition.value?.durationMs ?? 0)
+  }
+  function commit(edit, fromStart = false) {
     try {
-      project.value = applyProjectEdit(project.value, edit)
-      if (previewSlideId.value) {
-        if (!previewSlide.value) selectTransition(project.value.transitions[0]?.id ?? '')
-        else if (transitionId.value !== (previewSlide.value.transitionId ?? '')) selectSlide(previewSlideId.value)
-      }
-      error.value = ''
-      if (timeMs.value > (transition.value?.durationMs ?? 0)) clock.seek(transition.value?.durationMs ?? 0)
-      persistence.schedule(project.value)
+      const before = project.value
+      project.value = applyProjectEdit(fromStart && gestureBase ? gestureBase : before, edit)
+      if (gestureActive.value) gestureChanged.value = JSON.stringify(gestureBase) !== JSON.stringify(project.value)
+      else { history.record(before, project.value); historyState.value = history.state(); persistence.schedule(project.value) }
+      reconcile()
+      if (!gestureActive.value) error.value = ''
       return true
-    } catch (exception) { error.value = exception.message; return false }
+    } catch (exception) { if (gestureActive.value) gestureHasError = true; error.value = exception.message; return false }
   }
   function editTransition(edit) { return commit(draft => edit(draft.transitions.find(t => t.id === transitionId.value))) }
-  function selectTransition(id) { clock.stop(); transitionId.value = id; selection.value = null; previewSlideId.value = null }
+  function selectTransition(id) { clock.stop(); transitionId.value = id; selection.value = null; keySelection.value = null; previewSlideId.value = null }
   function selectSlide(id) {
     const slide = project.value.slides.find(slide => slide.id === id)
     if (!slide) return
@@ -63,8 +88,58 @@ export function useEditor(initialProject) {
     previewSlideId.value = id
   }
   function selectLayer(layerId, itemId) {
+    if (!layerId) { selection.value = null; keySelection.value = null; return }
+    if (selection.value?.layerId !== layerId || selection.value?.itemId !== itemId) keySelection.value = null
     selection.value = itemId ? { layerId, itemId } : { layerId }
     scope.value = itemId ? 'individual' : transition.value.layers.find(layer => layer.id === layerId).kind === 'group' ? 'group' : 'shape'
+    pickMode.value = scope.value === 'group' ? 'group' : 'child'
+  }
+  function selectKey(property, time) {
+    if (!selection.value) return
+    clock.pause(); seek(time)
+    keySelection.value = { ...selection.value, itemId: selection.value.itemId ?? null, scope: scope.value, property, timeMs: time }
+  }
+  function beginGesture() {
+    if (gestureActive.value) endGesture()
+    clock.pause(); gestureBase = project.value; gestureActive.value = true; gestureChanged.value = false; gestureHasError = false
+    gestureToken = ++gestureSerial
+    return gestureToken
+  }
+  function endGesture(token) {
+    if (!gestureActive.value || token !== undefined && token !== gestureToken) return
+    history.record(gestureBase, project.value); historyState.value = history.state()
+    gestureBase = null; gestureToken = null; gestureActive.value = false; gestureChanged.value = false
+    if (!gestureHasError) error.value = ''
+    persistence.schedule(project.value)
+  }
+  function cancelGesture(token) {
+    if (!gestureActive.value || token !== undefined && token !== gestureToken) return
+    project.value = gestureBase; gestureBase = null; gestureToken = null; gestureActive.value = false; gestureChanged.value = false
+    reconcile(); persistence.schedule(project.value)
+  }
+  function updateGesture(edit, token) {
+    if (!gestureActive.value || token !== undefined && token !== gestureToken) return false
+    return commit(edit, true)
+  }
+  function undo() {
+    endGesture(); clock.pause()
+    const restored = history.undo(project.value)
+    if (restored) { project.value = restored; reconcile(); persistence.schedule(project.value); error.value = '' }
+    historyState.value = history.state()
+  }
+  function redo() {
+    if (gestureActive.value) return
+    clock.pause()
+    const restored = history.redo(project.value)
+    if (restored) { project.value = restored; reconcile(); persistence.schedule(project.value); error.value = '' }
+    historyState.value = history.state()
+  }
+  function historyKey(event) {
+    if (event.key === 'Escape' && gestureActive.value) { event.preventDefault(); cancelGesture(); return }
+    if (event.defaultPrevented || event.altKey || !(event.ctrlKey || event.metaKey)
+      || event.target?.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return
+    const key = event.key.toLowerCase()
+    if (key === 'z' || key === 'y') { event.preventDefault(); if (event.shiftKey || key === 'y') redo(); else undo() }
   }
   function addTransition() {
     let id
@@ -119,13 +194,14 @@ export function useEditor(initialProject) {
   }
   function applyImport() {
     if (!pendingImport.value) return
-    clock.stop()
+    cancelGesture(); clock.stop()
     project.value = pendingImport.value.project
     pendingImport.value = null
     storageBlocked.value = false
     persistence.unblock(project.value)
     selectTransition(project.value.transitions[0]?.id ?? '')
     error.value = ''
+    history.clear(); historyState.value = history.state()
   }
   function exportProject() {
     const url = URL.createObjectURL(new Blob([serializeProject(project.value)], { type: 'application/json' }))
@@ -136,16 +212,20 @@ export function useEditor(initialProject) {
   function retryRestore() {
     const next = readStoredProject(getStorage, () => project.value)
     if (next.blocked) { error.value = next.error; return }
-    project.value = next.project; storageBlocked.value = false; error.value = ''
+    cancelGesture(); project.value = next.project; storageBlocked.value = false; error.value = ''
+    history.clear(); historyState.value = history.state()
     selectTransition(project.value.transitions[0]?.id ?? '')
     persistence.unblock(project.value)
   }
-  const flush = () => persistence.flush()
+  const flush = () => { cancelGesture(); persistence.flush() }
   window.addEventListener('pagehide', flush)
+  window.addEventListener('keydown', historyKey)
   if (!restored.blocked) persistence.schedule(project.value)
-  onUnmounted(() => { clock.dispose(); persistence.flush(); window.removeEventListener('pagehide', flush) })
+  onUnmounted(() => { cancelGesture(); clock.dispose(); persistence.flush(); window.removeEventListener('pagehide', flush); window.removeEventListener('keydown', historyKey) })
   return reactive({ project, transition, transitionId, previewSlide, layer, selection, scope, mode, timeMs, playing, error, saveStatus, storageBlocked, pendingImport,
-    renderShapes, commit, editTransition, selectTransition, selectSlide, selectLayer, addTransition, copyTransition, removeTransition,
+    renderShapes, keySelection, pickMode, gestureActive, historyState, canUndo, canRedo,
+    beginGesture, endGesture, cancelGesture, updateGesture, undo, redo, selectKey,
+    commit, editTransition, selectTransition, selectSlide, selectLayer, addTransition, copyTransition, removeTransition,
     addLayer, copyLayer, removeLayer, moveLayer, editBase, seek, play: clock.play, pause: clock.pause, stop: clock.stop,
     prepareImport, applyImport, exportProject, retryRestore, flush, retrySave: () => persistence.unblock(project.value) })
 }

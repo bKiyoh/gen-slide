@@ -56,6 +56,7 @@ onUnmounted(() => { observer?.disconnect(); void renderer?.dispose() })
       <div class="preview-background-logical" :style="{ transform: `scale(${fit.scale})` }"><slot name="background" /></div>
     </div>
     <svg v-if="outlines.length" class="selection-overlay" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><polygon v-for="outline in outlines" :key="outline.id" :points="outline.points" fill="none" stroke="#e8b85d" stroke-width="2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" /></svg>
+    <div v-if="$slots.interaction && status.state === 'ready'" class="preview-interaction" :style="{ width: `${fit.width}px`, height: `${fit.height}px` }"><slot name="interaction" :fit="fit" /></div>
     <p v-if="status.state === 'error'" class="canvas-message" role="alert">
       描画できませんでした。<br />
       {{ status.message }}<br />
@@ -71,4 +72,5 @@ onUnmounted(() => { observer?.disconnect(); void renderer?.dispose() })
 .canvas-container :deep(canvas) { position:relative; z-index:1; }
 .selection-overlay { z-index:2; }
 .canvas-message { z-index:3; }
+.preview-interaction { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:4; }
 </style>

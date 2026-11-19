@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, provide, ref } from 'vue'
 import { useEditor } from './useEditor.js'
 import ShapePreview from '../components/ShapePreview.vue'
 import NumberSlider from '../components/NumberSlider.vue'
@@ -8,14 +8,25 @@ import LayerPanel from './components/LayerPanel.vue'
 import PropertyPanel from './components/PropertyPanel.vue'
 import TimelinePanel from './components/TimelinePanel.vue'
 import SlideAssignmentPanel from './components/SlideAssignmentPanel.vue'
+import PreviewInteraction from './components/PreviewInteraction.vue'
+import DesignLibrary from './components/DesignLibrary.vue'
 import { resolveSlide } from '../presentation/slideRegistry.js'
 import { SLIDE_OPTIONS } from '../presentation/slideOptions.js'
 import './editor.css'
 const props = defineProps({ initialProject: Object })
-defineEmits(['present'])
+defineEmits(['present', 'compare-designs'])
 const e = useEditor(props.initialProject)
+provide('editorGesture', { begin: e.beginGesture, end: e.endGesture, cancel: e.cancelGesture })
 defineExpose({ getProject: () => JSON.parse(JSON.stringify(e.project)), flush: e.flush })
 const previewVisible = ref(true)
+const previewPanel = ref(null)
+async function previewDesign({ play, timeMs }) {
+  previewVisible.value = true
+  await nextTick()
+  previewPanel.value?.scrollIntoView({ block: 'start' })
+  if (play) e.play()
+  else e.seek(timeMs)
+}
 const previewComponent = computed(() => resolveSlide(e.previewSlide?.component))
 const previewCaption = computed(() => {
   if (!e.previewSlide) return ''
@@ -34,6 +45,8 @@ function setDuration(value) {
       <div><p class="eyebrow">GENERATIVE SLIDE / PHASE 3</p><h1>Transition Editor</h1></div>
       <div class="editor-actions project-actions">
         <span class="save-status" :data-state="e.saveStatus.state" role="status">{{ e.saveStatus.message }}</span>
+        <button type="button" :disabled="!e.canUndo" title="Ctrl/Cmd+Z" @click="e.undo">元に戻す</button>
+        <button type="button" :disabled="!e.canRedo" title="Ctrl/Cmd+Shift+Z" @click="e.redo">やり直す</button>
         <button type="button" class="button-primary" @click="$emit('present')">発表する</button>
         <button type="button" @click="e.exportProject">JSON出力</button>
         <label class="file-button">JSON読込<input id="project-import" type="file" accept=".json,application/json" @change="e.prepareImport($event.target.files[0]); $event.target.value = ''" /></label>
@@ -51,6 +64,7 @@ function setDuration(value) {
         <button type="button" class="button-danger" :disabled="!e.transition" @click="e.removeTransition">Transition削除</button>
       </div>
     </section>
+    <DesignLibrary :editor="e" @compare="$emit('compare-designs', $event)" @preview="previewDesign" />
     <details v-if="e.transition" :key="e.transitionId" class="transition-settings">
       <summary>Transition設定 <span>名前・長さ・切替時刻</span></summary>
       <div class="transition-settings-content">
@@ -65,15 +79,19 @@ function setDuration(value) {
     <SlideAssignmentPanel :editor="e" />
     <div class="editor-grid">
       <LayerPanel :editor="e" />
-      <section class="editor-panel editor-preview" aria-labelledby="editor-preview-title"><div class="section-header panel-heading"><h2 id="editor-preview-title">プレビュー</h2><button type="button" @click="previewVisible = !previewVisible">{{ previewVisible ? 'プレビューを停止' : 'プレビューを開始' }}</button></div>
+      <section ref="previewPanel" class="editor-panel editor-preview" aria-labelledby="editor-preview-title"><div class="section-header panel-heading"><h2 id="editor-preview-title">プレビュー</h2><button type="button" @click="previewVisible = !previewVisible">{{ previewVisible ? 'プレビューを停止' : 'プレビューを開始' }}</button></div>
+        <div class="preview-tools"><label><span>クリックで選択</span><select id="preview-pick-mode" v-model="e.pickMode"><option value="child">個別の図形</option><option value="group">Group全体</option></select></label><span>ドラッグで移動 · 四隅で拡縮 · 丸で回転</span></div>
+        <p class="editor-slide-note">図形は中心、Group全体は親の位置（金色の点）を基準に変形します。</p>
         <div v-if="e.previewSlide" class="editor-slide-context"><span data-testid="preview-context">{{ previewCaption }}</span><button type="button" @click="e.selectTransition(e.transitionId)">演出のみを表示</button></div>
         <ShapePreview v-if="previewVisible" :key="e.previewSlide ? 'slide' : 'transition'" :shapes="e.renderShapes" :selected-ids="selectedIds" :transparent="Boolean(e.previewSlide)">
           <template v-if="e.previewSlide" #background><div class="editor-slide-background" :data-preview-slide="e.previewSlide.id"><component :is="previewComponent" v-if="previewComponent" /><article v-else class="slide-content slide-unknown"><h1>未登録のスライドです</h1><p>{{ e.previewSlide.component }}</p></article></div></template>
+          <template #interaction="{ fit }"><PreviewInteraction :editor="e" :fit="fit" /></template>
         </ShapePreview><div v-else class="preview-stopped">プレビュー停止中</div>
         <p v-if="e.previewSlide" class="editor-slide-note">選んだスライドに演出を重ねて表示します。スライド間の切替は「発表する」で確認できます。</p>
         <div class="preview-caption"><span class="preview-selection">1920 × 1080 · {{ e.selection?.itemId ?? e.selection?.layerId ?? '選択なし' }}</span><span class="preview-time">{{ Math.round(e.timeMs) }} ms</span></div>
         <div class="playback-controls"><div class="transport-buttons"><button type="button" class="button-primary" :disabled="!e.transition" @click="e.play"><span aria-hidden="true">▶</span> 再生 / 再開</button><button type="button" :disabled="!e.playing" @click="e.pause">一時停止</button><button type="button" @click="e.stop">停止・先頭へ</button></div><span class="playback-state" data-testid="playback-state">{{ e.playing ? '再生中' : '停止中' }}</span></div>
         <NumberSlider id="editor-time" :model-value="Math.round(e.timeMs)" label="現在時刻" unit="ms" :min="0" :max="e.transition?.durationMs ?? 0" @update:model-value="e.seek" />
+        <p class="editor-history-note">履歴 {{ e.historyState.undoCount }} / {{ e.historyState.limit }} 件 · Escで操作をキャンセル。履歴は再読込・JSON読込・保存データ再取得でリセットします。</p>
       </section>
       <PropertyPanel :editor="e" />
       <TimelinePanel :editor="e" />

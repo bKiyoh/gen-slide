@@ -22,6 +22,7 @@ const warning = ref('')
 const controls = ref(true)
 const fullscreen = ref(false)
 const busy = computed(() => playback.value.state === 'transitioning')
+const activeTransition = computed(() => props.project.transitions.find(transition => transition.id === (busy.value ? playback.value.transitionId : slide.value?.transitionId)))
 let renderer
 let controller
 let observer
@@ -112,6 +113,7 @@ onUnmounted(() => {
     <footer v-if="controls" class="presentation-footer">
       <div class="presentation-actions"><button :disabled="busy || index <= 0" @click="controller.previous()">← 前へ</button><button class="button-primary" :disabled="busy || index >= project.slides.length - 1" @click="controller.next()">次へ →</button><span>{{ busy ? '演出中 · 追加入力は無視します' : '→ / Space / PageDown · ← / PageUp' }}</span></div>
       <span class="backend" :data-state="status.state" :title="status.message">{{ status.backend }}</span>
+      <span class="presentation-transition-label">{{ activeTransition ? `${busy ? '再生中' : '次の演出'}: ${activeTransition.name}` : index >= project.slides.length - 1 ? '最後のスライド' : '次は即時切替' }}</span>
       <p v-if="warning" class="presentation-warning" role="status">{{ warning }}</p>
     </footer>
     <p v-else-if="warning" class="presentation-warning floating-warning" role="status">{{ warning }}</p>

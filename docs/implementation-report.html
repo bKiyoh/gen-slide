@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Generative Slide SystemのPhase 0–4の実装・検証記録。機能、設計判断、処理フロー、検証結果、制約と引き継ぎ。" />
+  <meta name="description" content="Generative Slide SystemのPhase 0–5の実装・検証記録。機能、設計判断、処理フロー、検証結果、制約と引き継ぎ。" />
   <title>実装・検証レポート — Generative Slide System</title>
   <style>
     :root { color-scheme: light; --paper:#faf9f6; --ink:#24303f; --muted:#626f7c; --line:#dedfdc; --blue:#315db6; --red:#d65d4a; --green:#26725d; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif; line-height:1.85; }
@@ -117,15 +117,15 @@
 <a href="#phase-1"><span>01</span> 規則から生成</a>
 <a href="#phase-2"><span>02</span> 時刻から評価</a>
 <a href="#phase-3"><span>03</span> 編集・再生・保存</a>
-<a href="#phase-4"><span>04</span> スライド間の演出</a><a href="#phase-5"><span>05</span> Phase 5 · 未着手</a>
-<a href="#phase-6"><span>06</span> Phase 6 · 未着手</a><a href="#usage"><span>?</span> このレポートについて</a></nav>
-      <div class="sidebar-bottom">収録範囲 Phase 0–4<br />記録の最新確認日 2026-11-19<a href="../README.md">READMEを見る ↗</a></div>
+<a href="#phase-4"><span>04</span> スライド間の演出</a>
+<a href="#phase-5"><span>05</span> 直接操作と取り消し</a><a href="#phase-6"><span>06</span> Phase 6 · 未着手</a><a href="#usage"><span>?</span> このレポートについて</a></nav>
+      <div class="sidebar-bottom">収録範囲 Phase 0–5<br />記録の最新確認日 2026-11-19<a href="../README.md">READMEを見る ↗</a></div>
     </aside>
     <main id="overview">
-      <div class="topbar"><span>ENGINEERING REPORT / PHASE 0–4</span><button type="button" id="print-report">印刷 / PDF保存</button></div>
+      <div class="topbar"><span>ENGINEERING REPORT / PHASE 0–5</span><button type="button" id="print-report">印刷 / PDF保存</button></div>
       <header class="hero"><p class="eyebrow">GENERATIVE SLIDE SYSTEM</p><h1>実装・検証レポート</h1>
         <p class="lead">四角形を描く基盤から、規則に基づく生成、時刻からのアニメーション評価、編集・保存まで。各Phaseの実装内容・設計判断・検証結果・引き継ぎ事項をまとめています。</p>
-        <div class="hero-metrics"><span><b>Phase 4</b> まで実装</span><span><b>82</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
+        <div class="hero-metrics"><span><b>Phase 5</b> まで実装</span><span><b>98</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
       </header>
       <section aria-labelledby="progress-title"><div class="section-heading"><h2 id="progress-title">ここまでの実装</h2><span>各カードから全文へ移動できます</span></div><div class="phase-cards"><a class="phase-card" href="#phase-0">
   <span class="phase-label">PHASE 00</span><h3>描画基盤</h3>
@@ -146,18 +146,22 @@
 <a class="phase-card" href="#phase-4">
   <span class="phase-label">PHASE 04</span><h3>スライド間の演出</h3>
   <p>保存したTransitionをVueスライドへ割り当て。指定時刻で一度だけ切り替え、描画失敗時も発表を継続。</p>
-  <div class="card-meta"><span><b>82</b> テスト成功</span><span>詳細へ ↗</span></div></a></div></section>
+  <div class="card-meta"><span><b>82</b> テスト成功</span><span>詳細へ ↗</span></div></a>
+<a class="phase-card" href="#phase-5">
+  <span class="phase-label">PHASE 05</span><h3>直接操作と取り消し</h3>
+  <p>図形の選択・移動・回転・拡縮、キーのドラッグ、Undo/Redo。一つの操作を一つの履歴にまとめる。</p>
+  <div class="card-meta"><span><b>98</b> テスト成功</span><span>詳細へ ↗</span></div></a></div></section>
       <p class="overview-note">各Phaseの本文は、そのPhaseを完了した時点の記録です。「未実装」「次Phase」は当時の状態を示します。スライダー入力のレビュー対応も収録しています。</p>
       <section class="validation" aria-labelledby="validation-title"><div class="section-heading"><h2 id="validation-title">検証結果の一覧</h2><span>Markdown原本の記録値</span></div>
         <table><thead><tr><th scope="col">Phase</th><th scope="col">テスト</th><th scope="col">ビルド</th><th scope="col">確認日</th></tr></thead><tbody><tr><th scope="row">Phase 0</th><td>18件成功</td><td><span class="success">成功</span></td><td>2026-11-18</td></tr>
 <tr><th scope="row">Phase 1</th><td>33件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
 <tr><th scope="row">Phase 2</th><td>54件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
 <tr><th scope="row">Phase 3</th><td>67件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
-<tr><th scope="row">Phase 4</th><td>82件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr></tbody></table>
+<tr><th scope="row">Phase 4</th><td>82件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
+<tr><th scope="row">Phase 5</th><td>98件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr></tbody></table>
         <p>テスト数は各Phase時点の累計です。今回は原本のHTML化を行い、過去の検証を再実施したものではありません。未検証事項・警告は各Phase本文に記載しています。</p>
       </section>
-      <section id="upcoming" class="upcoming" aria-labelledby="upcoming-title"><div class="section-heading"><h2 id="upcoming-title">今後のPhase</h2><span>本文は実装後に追記</span></div><div id="phase-5" class="planned-phase"><div><p class="phase-label">PHASE 05</p><h3>直接操作・キーフレームのドラッグ・Undo / Redo</h3></div><span class="planned-status">未着手</span></div>
-<div id="phase-6" class="planned-phase"><div><p class="phase-label">PHASE 06</p><h3>Generator / Modifier・表現力の拡張（任意）</h3></div><span class="planned-status">未着手</span></div></section>
+      <section id="upcoming" class="upcoming" aria-labelledby="upcoming-title"><div class="section-heading"><h2 id="upcoming-title">今後のPhase</h2><span>本文は実装後に追記</span></div><div id="phase-6" class="planned-phase"><div><p class="phase-label">PHASE 06</p><h3>Generator / Modifier・表現力の拡張（任意）</h3></div><span class="planned-status">未着手</span></div></section>
       <article id="phase-0" class="phase-report" aria-labelledby="phase-0-title">
   <header class="report-header"><div><p class="phase-label">PHASE 00 / IMPLEMENTATION RECORD</p>
   <h2 id="phase-0-title">描画基盤<span>実装・検証記録</span></h2></div>
@@ -720,7 +724,7 @@ npm run docs:report</code></pre>
   <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-4-section-0">コミットと今回の範囲</a></li><li><a href="#phase-4-section-1">実装した機能</a></li><li><a href="#phase-4-section-2">追補: 発表構成とEditorプレビューの連動</a></li><li><a href="#phase-4-section-3">データと保存済み作品の扱い</a></li><li><a href="#phase-4-section-4">状態遷移と多重入力</a></li><li><a href="#phase-4-section-5">cover廃止と再生条件の見直し</a></li><li><a href="#phase-4-section-6">GPU描画とサイズの処理フロー</a></li><li><a href="#phase-4-section-7">失敗時の動作</a></li><li><a href="#phase-4-section-8">追加・変更ファイル</a></li><li><a href="#phase-4-section-9">自動テストとビルド結果</a></li><li><a href="#phase-4-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-4-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-4-section-12">制約と次工程への引き継ぎ</a></li><li><a href="#phase-4-section-13">完了条件</a></li></ul></details>
   <div class="record-body"><p>確認日: 2026-11-19。Phase 4で停止し、Phase 5以降は実装していません。</p>
 <h3 id="phase-4-section-0">コミットと今回の範囲</h3>
-<p>承認済みのPhase 3、暗転原因のcover表示、UI統一、関連する実装記録を <code>c7ac6ff</code>（feat: complete Phase 3 editor, persistence, and consistent UI）にコミットしました。Phase 4の変更はレビュー用に未コミットで残しています。</p>
+<p>承認済みのPhase 3、暗転原因のcover表示、UI統一、関連する実装記録を <code>c7ac6ff</code>（feat: complete Phase 3 editor, persistence, and consistent UI）にコミットしました。Phase 4は承認後、Phase 5着手前に <code>5dd86f9</code> へコミット済みです。</p>
 <p>今回の実装は、保存済みTransitionをVueスライド間で再生するPresentationです。スライド本文の本格的な編集、直接操作、Undo/Redo、Phase 5以降の機能は追加していません。</p>
 <h3 id="phase-4-section-1">実装した機能</h3>
 <ul><li>タイトル・コンテンツ・クロージングの3枚のVueスライド。初期Projectには別々の演出を割り当てています。</li>
@@ -865,12 +869,157 @@ npm run preview -- --host 127.0.0.1</code></pre>
 <li class="check-item"><span class="check" aria-label="完了">✓</span><span>本番ビルドをWebGPU・WebGL2の両方でオフライン再生。</span></li>
 <li class="check-item"><span class="check" aria-label="完了">✓</span><span>自動テスト・ビルド・ブラウザ確認を実施。</span></li>
 <li class="check-item"><span class="check" aria-label="完了">✓</span><span>Phase 5以降に進まず停止。</span></li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
+<article id="phase-5" class="phase-report" aria-labelledby="phase-5-title">
+  <header class="report-header"><div><p class="phase-label">PHASE 05 / IMPLEMENTATION RECORD</p>
+  <h2 id="phase-5-title">直接操作と取り消し<span>実装・検証記録</span></h2></div>
+  <a class="source-link" href="phases/phase-5-result.md">Markdown原本 ↗</a></header>
+  <div class="report-meta"><span>確認日 <time datetime="2026-11-19">2026-11-19</time></span><span>テスト <b>98件成功</b></span><span>ビルド <b>成功</b></span></div>
+  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li></ul></details>
+  <div class="record-body"><p>確認日: 2026-11-19。Phase 5で停止し、Phase 6には進んでいません。</p>
+<h3 id="phase-5-section-0">作業前のコミットと今回の範囲</h3>
+<p>承認済みのPhase 4、発表構成とEditorプレビューの連動、cover廃止、設計・仕様・実装記録を <code>5dd86f9</code>（feat: complete Phase 4 presentation and remove cover restrictions）にコミットしました。Phase 5の変更はレビュー用に未コミットで残しています。</p>
+<p>今回はプレビュー直接操作、キー時刻のドラッグ、Undo/Redoを追加しました。Generatorや描画方式の追加、Phase 6のRadial / Random / Path、自由頂点編集は実装していません。</p>
+<h3 id="phase-5-section-1">実装した機能と操作方法</h3>
+<ul><li>プレビュー上の四角形をクリックして選択、ドラッグで移動できます。重なる場合は描画順で最前面を選び、図形のない場所は選択解除します。</li>
+<li>「クリックで選択」で個別の図形・Group全体を選べます。レイヤーでGroupを選んだ場合はGroup選択へ、生成子を選んだ場合は個別選択へ同期します。</li>
+<li>選択枠の四隅の四角いハンドルで中心を固定した一様拡縮、上の丸いハンドルで回転できます。ハンドルの見かけの大きさはCSS pxで維持します。</li>
+<li>ベース編集ではShapeの基本値または生成子のOverridesを変更し、Generatorや共通アニメーションを保持します。</li>
+<li>キー編集では、タイムラインで明示的に選んだ対応キーだけを変更します。移動・拡縮は同時刻のX/Yキーを対で用意し、ドラッグではキーを追加しません。</li>
+<li>タイムラインの「位置キー追加 (X/Y)」「倍率キー追加 (X/Y)」で対を明示的に追加できます。回転キーは対象プロパティを選んで「現在時刻にキー追加」で用意します。</li>
+<li>タイムラインのキーをドラッグすると1ms単位で時刻を変更します。隣のキーを追い越さず、衝突する手前で止まります。</li>
+<li>再生ヘッドやレールのドラッグでシークします。キーのドラッグはキーフレーム編集モードで行い、開始時に再生を一時停止します。</li>
+<li>「元に戻す」「やり直す」、Ctrl/Cmd+Z、Ctrl/Cmd+Shift+Z、Ctrl/Cmd+Yに対応します。入力欄内の通常のUndoはブラウザへ任せます。</li>
+<li>図形・キー・パラメータースライダーの連続ドラッグと、数値・テキストの一連の入力を一つの履歴単位にまとめます。</li>
+<li>Esc、pointercancel、キャプチャ喪失、直接操作中のサイズ変更・プレビュー停止では操作開始前へ戻します。ポインターが画面外へ出てもキャプチャにより操作を継続・終了できます。</li></ul>
+<h3 id="phase-5-section-2">意匠ライブラリ: 5パターン</h3>
+<p>ユーザーから複数の意匠制作を依頼され、「5パターンをおまかせ」と回答を受けて追加しました。既存のShape / Linear・Grid / Modifier / Overrides / Keyframe / Staggerで制作したサンプルです。Phase 6の新しい生成方式や描画機能は追加していません。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="意匠ライブラリ: 5パターン"><table><thead><tr><th scope="col">意匠</th><th scope="col">動き</th><th scope="col">長さ</th><th scope="col">切替時刻</th></tr></thead><tbody><tr><td>斜線スイープ</td><td>赤と青の平行四辺形8本が、時間差で横切る</td><td>1280ms</td><td>600ms</td></tr>
+<tr><td>センターブロック</td><td>中央から青・赤のブロックが広がり、白いダイヤが回転</td><td>1160ms</td><td>580ms</td></tr>
+<tr><td>チェッカー・フリップ</td><td>7列×4行の市松模様が順に開き、傾いて閉じる</td><td>1540ms</td><td>780ms</td></tr>
+<tr><td>交互シャッター</td><td>6本の帯が左右交互に入り、逆方向へ抜ける</td><td>1280ms</td><td>620ms</td></tr>
+<tr><td>フレームズーム</td><td>4色の四角い枠が回転しながら外へ広がる</td><td>1600ms</td><td>780ms</td></tr></tbody></table></div>
+<p>Editorの「意匠ライブラリ」に5種類の見本と「追加して再生」を用意しました。クリックすると選んだ意匠を通常のTransitionとして追加し、プレビューへスクロールして再生します。追加後は色・形状・配置・キーを編集できます。「5種類をまとめて追加」も一つのUndoで戻せます。繰り返し追加した場合はIDと名前を重複させません。</p>
+<p>「5パターンを発表で比較」では、5演出を6枚のVueスライドで試せます。比較用Projectは独立しており、Editorへ戻ると作業中のProjectを引き継ぎます。比較だけでは既存のTransition・発表構成を変更しません。発表のフッターに、次に使う演出・再生中の演出名を表示します。</p>
+<p>比較用の <code>public/examples/design-patterns.json</code>（約44kB）も用意しました。ライブラリの「比較用JSONを保存」から取得し、通常のJSON読込で使用できます。読み込みを適用すると現在のProjectを置き換える従来の確認手順を使います。個別追加・まとめて追加の場合は既存の作品と発表構成を保持します。</p>
+<p>全て開始・終了時に図形が透明となり、単色coverを挿入しません。フレームズームは枠の動きが中心で、全画面を覆う演出にはしていません。</p>
+<p>追加後の全3テストでは、各意匠の16ms刻み・切替時刻・代表時刻の評価、開始・終了の透明性、JSON往復、非破壊追加、ID・名前の一意性、オブジェクトの独立性、比較用JSONと生成元の一致を確認しました。Chromeの開発・本番WebGPU / WebGL2で、5種類の実描画・6枚の比較・個別再生・JSON保存・Undo/Redo・元のProjectの保持・幅320〜1600pxを確認し、ページ例外は0件です。本番ではネット切断中も5演出を再生できました。</p>
+<h3 id="phase-5-section-3">座標変換とHit Test</h3>
+<p>プレビュー内のCSSサイズをfitCanvasで16:9に収め、左右または上下の余白を引いて1920×1080へ逆変換します。DPRはGPU画素数にだけ影響し、ポインター座標には掛けません。ドラッグ開始時に余白をクリックした場合は無視し、キャプチャ後の移動は表示領域外でも計算します。</p>
+<p>Hit TestはRendererと同じ形状頂点とworldMatrixを使います。回転・傾斜・親の変換を反映した凸四角形に点が含まれるかを判定し、配列の末尾から探します。不透明度0の図形と面積0の退化図形は対象外です。選択専用のGPUバッファや別の描画エンジンは追加していません。</p>
+<p>ポインター開始時はpreventScroll付きで操作面へフォーカスし、フォーカス移動で画面がスクロールして論理座標がずれることを防ぎます。</p>
+<h3 id="phase-5-section-4">親の逆変換と画面値の書き戻し</h3>
+<p>移動はポインターの論理差分を開始時の画面上の中心へ足します。既存のdisplayValuesの逆変換で親行列を外し、子のローカルなOverrideまたはキーへ戻します。親に回転と非一様scaleがある場合でも、X/Yを対で変更して画面上の移動を一致させます。</p>
+<p>回転は変形中心からポインターへ向かう角度の差、拡縮は中心からの距離の比から求めます。Shapeと生成子の変形中心は図形中心です。Group全体は既存の契約どおり親の原点を中心とし、金色の点と説明を表示します。Groupの選択枠は子の外接枠です。</p>
+<p>子の画面上の回転・倍率は、Phase 3と同じく正の一様scaleの親で扱います。親が非一様・反転・0倍率の場合の子の回転・倍率は、数値編集と同じ制約を通知して拒否します。移動は可逆な親行列であれば非一様scaleでも対応します。倍率0・不安定な逆変換・非有限座標・範囲外のデータは通知し、直前の有効な状態を保ちます。</p>
+<p>ベース値がabsoluteキーで固定されている場合も、既存の数値編集と同じ理由を表示して拒否します。編集モードや値の保存先を勝手に切り替えません。</p>
+<h3 id="phase-5-section-5">明示的なキー選択とタイムライン</h3>
+<p>キーの選択状態はLayer・Item・Scope・Property・Timeで保持する一時UI状態です。位置の移動には位置キー、回転には回転キー、拡縮には倍率キーを選ぶ必要があります。キーがない、別の操作のキーが選ばれている、X/Yの片方しかない場合は、追加・選択方法を通知します。</p>
+<p>Group / Child / Individualの階層を保持し、Child共通の表示値は従来どおりitem-000を基準にします。親が回転した場合の位置キーはX/Yを対で変更し、他のキー時刻・プロパティ・Child共通アニメーションを維持します。</p>
+<p>時刻のドラッグは、開始時のキーと隣接キーを基準に下限・上限を計算します。インポートしたキー配列が未整列でも時刻順の隣接キーを使い、編集後は昇順へ整列します。1msの隙間が取れない場合は、数値入力で調整する案内を出します。既存のEasing編集と時刻の数値入力は継続できます。再生ヘッドの変更はProjectや履歴に入りません。</p>
+<h3 id="phase-5-section-6">Undo/Redoの履歴と保存</h3>
+<p>履歴は検証済みProjectのJSONスナップショットだけを保持します。選択・モード・キーの選択・再生位置・DOM・GPU参照は含みません。最大50スナップショット、合計4 Mi文字（UTF-16の文字列領域として約8 MiBが上限）で古い履歴から削除します。現在のProjectと操作中の一時データはこの履歴容量の集計には含みません。</p>
+<pre aria-label="text"><code>操作開始 → 現在のProjectを退避、再生を一時停止
+  → pointermoveごとに複製・検証 → プレビューへ即時反映
+  → 操作完了 → 開始前を履歴へ一度だけ追加 → 最新Projectを自動保存
+  → キャンセル → 開始前へ復帰、履歴は追加しない
+
+Undo → 直前のProjectへ復帰 → Redo側に現在値を保存 → 自動保存
+Redo → 再適用 → 自動保存
+Undo後の新規編集 → Redo履歴を破棄</code></pre>
+<p>操作には識別子を割り当て、前の入力欄の遅いblur・終了イベントが次のドラッグを確定しないようにしています。直接操作の差分は開始時のProjectに対して適用し、ポインター移動回数による二重加算を防ぎます。操作途中の状態は自動保存へ渡さず、確定後の状態だけを保存します。pagehideや画面を離れる際は、未確定の操作を開始前へ戻してから保存をflushします。</p>
+<p>Undo/Redoで選択中のTransition・Layer・キーがなくなった場合は、UIの参照も整理します。JSON適用・保存データの再取得は新しい起点として履歴をクリアします。再読込とEditorの再マウントでも履歴はリセットし、Project自体は復元します。</p>
+<h3 id="phase-5-section-7">処理フローとGPUへの影響</h3>
+<ol><li>ポインター座標を論理座標へ変換し、評価済みの四角形から対象を選びます。</li>
+<li>操作開始時のProject・画面値・変形中心を固定します。</li>
+<li>ポインターの移動から表示したい画面値を計算し、既存の逆変換とProject更新APIで書き戻します。</li>
+<li>既存Evaluatorが時刻の図形状態を計算し、既存Rendererが同じMesh・Geometry・Materialを更新します。</li>
+<li>選択枠・ハンドルはSVGで重ね、追加のGPU Canvasを作りません。</li>
+<li>終了時に履歴を一件確定し、キャンセル・アンマウント時にキャプチャと一時状態を解除します。</li></ol>
+<p>描画方式、Three.jsのAPI、Domain / Evaluatorの依存関係は変更していません。Phase 4で廃止したcoverも復活させていません。</p>
+<h3 id="phase-5-section-8">追加・変更したファイル</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="追加・変更したファイル"><table><thead><tr><th scope="col">ファイル</th><th scope="col">責務</th></tr></thead><tbody><tr><td><code>src/editor/previewGeometry.js</code></td><td>CSSと論理座標の往復、四角形の頂点、Hit Test、選択枠とハンドル位置</td></tr>
+<tr><td><code>src/editor/directEdit.js</code></td><td>操作モードとキーの検証、移動・回転・一様拡縮、既存の表示値編集への接続、キー時刻の衝突防止</td></tr>
+<tr><td><code>src/editor/projectHistory.js</code></td><td>ProjectだけのUndo/Redo、分岐、件数・文字数上限</td></tr>
+<tr><td><code>src/editor/components/PreviewInteraction.vue</code></td><td>Pointer Capture、選択・変形、固定サイズのハンドル、キャンセル</td></tr>
+<tr><td><code>src/editor/useEditor.js</code></td><td>編集の履歴化、操作中のトランザクション、選択キー、Undo/Redo、保存・Import・破棄との整合</td></tr>
+<tr><td><code>src/editor/components/TimelinePanel.vue</code></td><td>キー・再生ヘッドのドラッグ、明示的な選択、位置・倍率キーの対の追加</td></tr>
+<tr><td><code>src/components/NumberSlider.vue</code>, <code>src/editor/components/EditorField.vue</code></td><td>入力・スライダー操作の開始・確定・キャンセルを履歴へ接続</td></tr>
+<tr><td><code>src/components/ShapePreview.vue</code></td><td>GPU初期化済みの同じ表示サイズに操作用SVGを重ねるスロット</td></tr>
+<tr><td><code>src/editor/EditorView.vue</code>, <code>src/editor/editor.css</code></td><td>Undo/Redo、選択モード、操作説明、ハンドル・再生ヘッドの表示</td></tr>
+<tr><td><code>src/domain/project/designPatterns.js</code>, <code>src/editor/components/DesignLibrary.vue</code></td><td>5意匠のデータ・通常のTransitionへの追加・見本・再生操作</td></tr>
+<tr><td><code>src/App.vue</code>, <code>src/presentation/PresentationView.vue</code>, <code>presentation.css</code></td><td>独立Projectでの比較、既存Projectの保持、演出名表示</td></tr>
+<tr><td><code>scripts/build-design-examples.mjs</code>, <code>public/examples/design-patterns.json</code>, <code>tests/designPatterns.test.js</code></td><td>配布用JSONの生成・整合性と意匠サンプルの検証</td></tr>
+<tr><td><code>tests/directEditing.test.js</code></td><td>座標・Hit Test・親変換・キー・履歴・保存・Importの回帰テスト</td></tr>
+<tr><td><code>README.md</code>, <code>scripts/build-implementation-report.mjs</code>, <code>docs/implementation-report.html</code></td><td>操作案内とPhase 5のHTMLレポート</td></tr></tbody></table></div>
+<p>追加依存パッケージはありません。</p>
+<h3 id="phase-5-section-9">自動テストとビルド結果</h3>
+<ul><li><code>npm test</code>: <strong>98件成功</strong>。既存82件にPhase 5の13件、意匠サンプル関連3件を追加しました。</li>
+<li><code>npm run build</code>: <strong>成功</strong>。67 modules、JS約1008 kB、gzip約286 kB。従来からの500 kB超のチャンク警告は残っています。</li>
+<li>Lint: 設定がないため未実行。</li></ul>
+<p>新規テストはCSS座標と論理座標の往復・余白、描画順と透明/退化図形、非一様な親での移動、Generator変更後のOverride保持、回転・倍率の差分、非可逆な変換の拒否、キー編集の保存先、時刻ドラッグの衝突・境界、Undo/Redo・Redo破棄・履歴上限・容量・Importリセット、ドラッグ一件化とキャンセル・pagehide・保存、通知によるドラッグ中のレイアウト変化防止、未整列キーの隣接判定、遅い入力イベントによる新しい操作の誤終了防止を確認しています。</p>
+<h3 id="phase-5-section-10">実ブラウザの検証結果</h3>
+<p>Chrome 158.0.8127.36のヘッドレス実行で確認しました。Playwrightは一時ディレクトリの検証用環境を使い、プロジェクト依存には追加していません。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="実ブラウザの検証結果"><table><thead><tr><th scope="col">検証</th><th scope="col">結果</th></tr></thead><tbody><tr><td>開発版・本番版のWebGPU / WebGL2、DPR 2</td><td>子・親の移動、回転・拡縮、Undo/Redo、保存、Presentationが成功</td></tr>
+<tr><td>回転30°・scaleX 1.2 / scaleY 1.5の親の子を移動</td><td>ポインターの論理差分とワールド座標が一致</td></tr>
+<tr><td>個別移動後にGeneratorの間隔を変更</td><td>Overrideのオフセットを保持</td></tr>
+<tr><td>Group全体の移動</td><td>子の個別設定を保持して親位置を変更。Undo一回で復帰</td></tr>
+<tr><td>選択キーの位置・回転・倍率を操作</td><td>キーを増やさず既存キーを変更、他の値を維持</td></tr>
+<tr><td>キー未選択・absoluteで固定されたベース値</td><td>原因を表示し、Project・履歴を変更しない</td></tr>
+<tr><td>Child共通位置キーを直接操作</td><td>全ての子が同じ画面差分で移動し、個別Overrideを追加しない</td></tr>
+<tr><td>キー時刻ドラッグで隣キーへ近づける</td><td>1000msの手前の999msで停止。Undoで600msへ復帰</td></tr>
+<tr><td>再生ヘッドのドラッグ</td><td>シークのみで履歴件数は変わらない</td></tr>
+<tr><td>再生中にキーをドラッグ</td><td>開始時に一時停止</td></tr>
+<tr><td>図形・キー・スライダーの連続ドラッグ、数値入力</td><td>一回の操作を履歴一件にまとめる</td></tr>
+<tr><td>数値欄から同じ欄のスライダー・図形ドラッグへ移動</td><td>遅いblurで新しい操作を終了せず、入力とドラッグを一履歴ずつ確定</td></tr>
+<tr><td>未整列のJSONキーをドラッグ</td><td>時刻順に整列し、変更したキーの選択を保持。一履歴で取り消し可能</td></tr>
+<tr><td>Esc・pointercancel・表示サイズ変更</td><td>開始前へ戻し、履歴を追加しない</td></tr>
+<tr><td>幅320 / 390 / 768 px、DPR 2</td><td>移動量・選択枠が一致し、横はみ出しなし</td></tr>
+<tr><td>Ctrl+Z / Ctrl+Shift+Z、入力欄のCtrl+Z</td><td>Editor履歴を操作し、入力欄の通常編集と競合しない</td></tr>
+<tr><td>編集・Undo/Redo後に発表しEditorへ戻る</td><td>最新Projectを再生、Editor再マウントで履歴をリセット</td></tr>
+<tr><td>保存して再読込、ドラッグ中に画面離脱</td><td>確定済みProjectを維持し、選択・時刻・履歴をリセット</td></tr>
+<tr><td>Phase 4の添付4枚・14図形の演出</td><td>開発・本番、WebGPU / WebGL2で全演出を再生。旧coverを挿入しない</td></tr>
+<tr><td>本番のネット切断中の発表</td><td>WebGPU / WebGL2とも成功</td></tr></tbody></table></div>
+<p>上記の実行で、未処理のページ例外は0件でした。</p>
+<h3 id="phase-5-section-11">動作確認の手順と実行場所</h3>
+<p>すべてのコマンドの実行場所は <strong>リポジトリのルート</strong> です。</p>
+<pre aria-label="sh"><code>npm test
+npm run build
+npm run preview -- --host 127.0.0.1</code></pre>
+<ol><li>EditorでShapeまたはGroupを用意し、プレビュー上の図形をクリックします。Groupの子と全体は選択モードで切り替えます。</li>
+<li>本体をドラッグして移動、四隅の四角で一様拡縮、丸で回転します。「元に戻す」「やり直す」で操作全体を往復できます。</li>
+<li>キーフレーム編集へ切り替え、タイムラインで位置・回転・倍率のキーを明示的に作成して選択します。位置・倍率はX/Yを対にします。</li>
+<li>選択キーの図形を操作し、キーのマーカーをドラッグして時刻を変更します。再生ヘッドのドラッグはシークのみです。</li>
+<li>Escやpointercancel、プレビュー停止で途中の操作を取り消し、履歴が増えないことを確認します。</li>
+<li>保存後に再読込し、Projectが復元されることを確認します。履歴・再生位置・選択はリセットします。</li>
+<li>「発表する」で既存の演出を確認します。cover設定は不要です。</li></ol>
+<p>意匠の配布JSONを再生成する場合は <strong>リポジトリのルート</strong> で実行します。</p>
+<pre aria-label="sh"><code>node scripts/build-design-examples.mjs</code></pre>
+<p>記録の再生成も <strong>リポジトリのルート</strong> で実行します。</p>
+<pre aria-label="sh"><code>npm run docs:report</code></pre>
+<h3 id="phase-5-section-12">既知の制約と次工程への引き継ぎ</h3>
+<ul><li>直接拡縮は中心を固定した一様倍率です。軸ごとの倍率は既存の数値入力を使います。</li>
+<li>子の回転・倍率の直接操作は正の一様scaleの親に対応します。非一様・反転・0倍率の親では原因を表示し、Phase 3と同じ制約を維持します。</li>
+<li>画面外にある図形・ハンドルは画面内へ戻すか数値入力で調整します。ズーム・パンは追加していません。</li>
+<li>時刻ドラッグは1ms刻み、隣のキーを追い越しません。より細かい時刻や順序変更は数値入力で行えます。</li>
+<li>Undo/RedoはこのEditorの起動中のみです。再読込・再マウント・JSON適用・保存データ再取得で履歴をクリアします。容量上限で50件より少なくなる場合があります。</li>
+<li>Safari・Firefox・実機タッチ操作・ペン入力は未検証です。ChromeでのDPR 2と小画面、pointercancelは検証しました。</li>
+<li>Phase 6へ進んでいません。</li></ul>
+<h3 id="phase-5-section-13">完了条件</h3>
+<ul><li class="check-item"><span class="check" aria-label="完了">✓</span><span>プレビュー上で形状を選択。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>移動・回転・一様拡縮をポインターで編集。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>Group子の移動で親の変換を逆算。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>ベース編集と明示的なキー編集の保存先が一貫。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>キーの時刻と再生ヘッドをドラッグ。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>一つのドラッグをUndo/Redo一回にまとめる。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>保存・復元、既存Presentation再生とcover廃止を維持。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>自動テスト・ビルド・ブラウザ確認の結果を記録。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>Phase 6へ進まず停止。</span></li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
       <section id="usage" class="usage" aria-labelledby="usage-title"><h2 id="usage-title">このレポートについて</h2>
         <p><code>docs/phases/phase-*-result.md</code> を原本として生成したHTML版です。本文はすべてこのファイルに含まれ、インターネット接続や開発サーバーなしで閲覧できます。Markdown原本・README・公式資料へのリンクは、移動先のファイルまたは通信が必要です。</p>
         <p>更新する場合はMarkdown原本を編集し、<strong>リポジトリのルート</strong>で <code>npm run docs:report</code> を実行してください。</p>
         <p>「印刷 / PDF保存」で全Phaseをまとめて印刷できます。ブラウザのページ内検索で、ファイル名・API名・検証項目を探せます。</p>
       </section>
-      <footer>Generative Slide System · Phase 0–4 · 実装記録のHTML版</footer>
+      <footer>Generative Slide System · Phase 0–5 · 実装記録のHTML版</footer>
     </main>
   </div>
   <script>document.getElementById('print-report').addEventListener('click', () => window.print())</script>

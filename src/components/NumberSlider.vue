@@ -12,7 +12,8 @@ const props = defineProps({
   sliderMax: { type: Number, default: undefined },
   step: { type: Number, default: 1 },
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'interaction-start', 'interaction-end', 'interaction-cancel'])
+function startPointer(event) { event.target.setPointerCapture(event.pointerId); emit('interaction-start', event.target) }
 
 // 普段使う範囲で調整しやすくし、数値入力が有効範囲内ならスライダーも広げる。
 // 空欄・範囲外の数値は書き戻さず、既存の入力検証へそのまま渡す。
@@ -47,6 +48,10 @@ function update(event) {
         :step="step"
         :value="limits.current"
         @input="update"
+        @pointerdown="startPointer"
+        @pointerup="emit('interaction-end', $event.target)"
+        @pointercancel="emit('interaction-cancel', $event.target)"
+        @lostpointercapture="emit('interaction-end', $event.target)"
       />
       <input
         :id="id"
@@ -57,6 +62,8 @@ function update(event) {
         :value="modelValue"
         :aria-labelledby="`${id}-label`"
         @input="update"
+        @focus="emit('interaction-start', $event.target)"
+        @blur="emit('interaction-end', $event.target)"
       />
     </div>
   </div>
