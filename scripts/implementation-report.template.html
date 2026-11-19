@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generative Slide SystemのPhase {{RANGE}}の実装・検証記録。機能、設計判断、処理フロー、検証結果、制約と引き継ぎ。" />
+  <title>実装・検証レポート — Generative Slide System</title>
+  <style>
+    :root { color-scheme: light; --paper:#faf9f6; --ink:#24303f; --muted:#626f7c; --line:#dedfdc; --blue:#315db6; --red:#d65d4a; --green:#26725d; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif; line-height:1.85; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:24px; }
+    body { margin:0; color:var(--ink); background:var(--paper); }
+    a { color:var(--blue); text-underline-offset:4px; }
+    a:hover { text-decoration-thickness:2px; }
+    a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible { outline:3px solid #8eb4ff; outline-offset:4px; }
+    .skip-link { position:fixed; top:-80px; left:16px; padding:8px 16px; background:#fff; z-index:10; }
+    .skip-link:focus { top:12px; }
+    .layout { display:grid; grid-template-columns:236px minmax(0,1fr); min-height:100vh; }
+    .sidebar { position:sticky; top:0; height:100vh; background:#1c2738; color:#e7edf6; padding:40px 24px; display:flex; flex-direction:column; }
+    .brand-mark { display:flex; gap:7px; height:24px; margin-bottom:19px; }
+    .brand-mark span { width:28px; height:19px; transform:skewX(-24deg); background:#7096ed; }
+    .brand-mark span:first-child { background:#ec7b66; }
+    .brand { font-size:13px; line-height:1.55; font-weight:650; letter-spacing:.04em; }
+    .sidebar .caption { color:#a4b1c5; font-size:11px; margin:14px 0 35px; }
+    .sidebar nav { display:grid; gap:6px; }
+    .sidebar nav a { color:#c6d2e5; text-decoration:none; font-size:12px; padding:11px 12px; border-radius:5px; }
+    .sidebar nav a:first-child { background:#2c3c56; color:white; }
+    .sidebar nav a:hover { background:#30415d; }
+    .sidebar nav a span { color:#95a7c1; font-size:10px; margin-right:10px; font-variant-numeric:tabular-nums; }
+    .sidebar-bottom { margin-top:auto; padding-top:32px; border-top:1px solid #3b485b; font-size:11px; color:#b2c0d4; }
+    .sidebar-bottom a { display:block; color:#d6e3f8; margin-top:10px; }
+    main { min-width:0; max-width:1280px; padding:50px clamp(24px,5vw,76px) 32px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:11px; color:var(--muted); }
+    .topbar span { letter-spacing:.15em; }
+    button { font:inherit; cursor:pointer; border:1px solid #cbd0d5; background:white; border-radius:5px; color:var(--ink); padding:7px 12px; }
+    button:hover { background:#edf2fa; }
+    .hero { padding:45px 0 30px; }
+    .eyebrow,.phase-label { font-size:10px; font-weight:650; letter-spacing:.15em; color:var(--blue); margin:0 0 12px; }
+    h1 { font-size:clamp(29px,3.5vw,46px); line-height:1.35; letter-spacing:-.03em; margin:0 0 15px; font-weight:700; }
+    .lead { color:var(--muted); font-size:14px; max-width:670px; margin:0; }
+    .hero-metrics { display:flex; flex-wrap:wrap; gap:12px 34px; margin-top:28px; font-size:11px; color:var(--muted); }
+    .hero-metrics b { color:var(--ink); font-size:20px; margin-right:7px; font-weight:650; font-variant-numeric:tabular-nums; }
+    .section-heading { display:flex; justify-content:space-between; align-items:baseline; gap:16px; margin:12px 0; }
+    .section-heading h2 { font-size:15px; margin:0; }
+    .section-heading span { color:var(--muted); font-size:10px; }
+    .phase-cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .phase-card { display:flex; flex-direction:column; color:inherit; background:white; border:1px solid var(--line); border-top:3px solid var(--blue); border-radius:6px; padding:22px 20px 16px; text-decoration:none; }
+    .phase-card:first-child { border-top-color:var(--red); }
+    .phase-card:last-child { border-top-color:var(--green); }
+    .phase-card:hover { box-shadow:0 5px 18px #1c273810; }
+    .phase-card h3 { font-size:17px; margin:0 0 10px; }
+    .phase-card p { color:var(--muted); font-size:12px; margin:0 0 22px; }
+    .card-meta { margin-top:auto; padding-top:12px; border-top:1px solid #eceeea; display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; font-size:10px; color:var(--muted); }
+    .card-meta b { font-size:18px; color:var(--ink); margin-right:3px; }
+    .overview-note { margin:20px 0 32px; border-left:3px solid #bdcadb; padding:10px 16px; background:#f0f3f6; color:#536172; font-size:12px; }
+    .validation { margin:28px 0 46px; }
+    table { border-collapse:collapse; width:100%; text-align:left; font-size:12px; }
+    th,td { padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+    thead th { background:#edf0f3; font-size:11px; font-weight:600; color:#4c5b6c; }
+    .success { display:inline-block; color:var(--green); background:#e9f3ed; font-size:10px; border-radius:4px; padding:1px 7px; }
+    .validation p { font-size:11px; color:var(--muted); margin:10px 0 0; }
+    .upcoming { margin:0 0 46px; }
+    .planned-phase { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:18px 20px; margin-top:10px; border:1px dashed #cbd0d5; border-radius:5px; background:#f4f4f0; scroll-margin-top:24px; }
+    .planned-phase .phase-label { color:var(--muted); margin-bottom:4px; }
+    .planned-phase h3 { font-size:13px; line-height:1.7; margin:0; font-weight:600; }
+    .planned-status { flex-shrink:0; font-size:10px; color:var(--muted); background:#e7e9e6; padding:2px 8px; border-radius:4px; }
+    .phase-report { border-top:1px solid #aab5c1; padding-top:32px; margin:0 0 54px; scroll-margin-top:24px; }
+    .report-header { display:flex; justify-content:space-between; align-items:center; gap:20px; }
+    .report-header h2 { font-size:27px; line-height:1.4; margin:0; letter-spacing:-.02em; }
+    .report-header h2 span { display:block; color:var(--muted); font-size:12px; font-weight:400; margin-top:6px; letter-spacing:0; }
+    .source-link { white-space:nowrap; font-size:11px; }
+    .report-meta { display:flex; flex-wrap:wrap; gap:6px 24px; margin:20px 0; color:var(--muted); font-size:11px; }
+    .report-meta b { color:var(--green); font-weight:600; margin-left:5px; }
+    .report-meta time { color:var(--ink); margin-left:5px; }
+    .section-index { background:#f0f2ef; border:1px solid var(--line); border-radius:5px; padding:12px 16px; font-size:12px; margin-bottom:24px; }
+    summary { cursor:pointer; font-weight:600; }
+    .section-index ul { columns:2; column-gap:30px; padding-left:20px; }
+    .section-index li { break-inside:avoid; margin:4px 0; }
+    .record-body { font-size:13px; }
+    .record-body h3 { margin:34px 0 14px; padding-left:12px; border-left:3px solid var(--blue); font-size:18px; font-weight:650; line-height:1.5; }
+    .record-body h4 { margin:25px 0 12px; font-size:14px; }
+    .record-body p { margin:12px 0; }
+    .record-body ul,.record-body ol { padding-left:23px; margin:12px 0; }
+    .record-body li { margin:6px 0; }
+    .record-body li::marker { color:#71829a; }
+    .record-body code { overflow-wrap:anywhere; padding:2px 5px; font-size:.9em; color:#375278; background:#edf1f5; border-radius:3px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .record-body pre { overflow-x:auto; border:1px solid #d8dfe6; border-radius:5px; background:#edf1f5; padding:18px 20px; font-size:12px; line-height:1.8; tab-size:2; }
+    .record-body pre code { padding:0; background:none; color:#334b69; overflow-wrap:normal; }
+    .table-scroll { max-width:100%; overflow-x:auto; margin:18px 0; border:1px solid var(--line); border-radius:5px; background:white; }
+    .record-body table { min-width:540px; }
+    .record-body td { min-width:130px; overflow-wrap:anywhere; }
+    .record-body td:first-child { min-width:180px; }
+    .record-body td code { background:none; padding:0; }
+    .record-body tbody tr:last-child td { border-bottom:0; }
+    .record-body .check-item { display:flex; align-items:baseline; gap:9px; list-style:none; margin-left:-20px; }
+    .check { color:var(--green); font-weight:700; }
+    .back-top { display:inline-block; margin-top:22px; font-size:11px; }
+    .usage { padding:22px 24px; background:#edf1f5; border-radius:6px; font-size:12px; }
+    .usage h2 { margin:0 0 10px; font-size:15px; }
+    .usage p { margin:7px 0; }
+    .usage code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+    footer { margin-top:26px; border-top:1px solid var(--line); padding-top:16px; font-size:10px; color:var(--muted); }
+    @media(max-width:1100px) { .layout { grid-template-columns:200px minmax(0,1fr); } .sidebar { padding:32px 18px; } main { padding:36px 28px; } .phase-cards { grid-template-columns:1fr; } .phase-card { padding:17px 20px; } .phase-card p { margin-bottom:12px; } }
+    @media(max-width:700px) { .layout { display:block; } .sidebar { position:static; height:auto; padding:20px; } .brand-mark,.sidebar .caption,.sidebar-bottom { display:none; } .brand { font-size:11px; } .sidebar nav { display:flex; flex-wrap:wrap; margin-top:15px; gap:5px; } .sidebar nav a { padding:6px 9px; font-size:10px; } .sidebar nav a span { margin-right:4px; } main { padding:24px 18px; } .hero { padding-top:30px; } .topbar span { font-size:9px; letter-spacing:.08em; } .report-header { align-items:flex-start; flex-direction:column; gap:10px; } .report-header h2 { font-size:24px; } .section-index ul { columns:1; } .section-heading { flex-wrap:wrap; gap:2px; } th,td { padding:10px 8px; } .record-body { font-size:12px; } .record-body h3 { font-size:16px; } .report-meta { gap:6px 16px; } }
+    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+    @media print { @page { margin:16mm 14mm; } html { scroll-behavior:auto; } body { background:white; color:black; } .layout { display:block; } .sidebar,.topbar button,.skip-link,.back-top,.section-index,.source-link { display:none; } main { max-width:none; padding:0; } .topbar { font-size:9px; } .hero { padding:20px 0; } h1 { font-size:28px; } .phase-cards { grid-template-columns:repeat(3,minmax(0,1fr)); } .phase-card { box-shadow:none; padding:12px; } .phase-card h3 { font-size:13px; } .phase-card p { font-size:10px; } .phase-report { break-before:page; margin-bottom:0; } .record-body { font-size:10px; } .record-body h3 { font-size:14px; break-after:avoid; } .record-body h4 { break-after:avoid; } table { font-size:9px; } th,td { padding:7px; } .table-scroll { overflow:visible; border:0; } .record-body table { min-width:0; table-layout:fixed; } .record-body td,.record-body td:first-child { min-width:0; } tr { break-inside:avoid; } thead { display:table-header-group; } .record-body pre { white-space:pre-wrap; overflow-wrap:anywhere; overflow:visible; font-size:9px; } .phase-card,.overview-note,.usage { break-inside:avoid; } a { color:inherit; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#overview">本文へ移動</a>
+  <div class="layout">
+    <aside class="sidebar" aria-label="レポートナビゲーション">
+      <div class="brand-mark" aria-hidden="true"><span></span><span></span></div>
+      <div class="brand">GENERATIVE<br />SLIDE SYSTEM</div>
+      <p class="caption">Implementation &amp; validation<br />開発の積み上げを、一つの記録に。</p>
+      <nav aria-label="Phaseの目次"><a href="#overview"><span>↗</span> 全体概要</a>{{NAV}}{{PLANNED_NAV}}<a href="#usage"><span>?</span> このレポートについて</a></nav>
+      <div class="sidebar-bottom">収録範囲 Phase {{RANGE}}<br />記録の最新確認日 {{LATEST_DATE}}<a href="../README.md">READMEを見る ↗</a></div>
+    </aside>
+    <main id="overview">
+      <div class="topbar"><span>ENGINEERING REPORT / PHASE {{RANGE}}</span><button type="button" id="print-report">印刷 / PDF保存</button></div>
+      <header class="hero"><p class="eyebrow">GENERATIVE SLIDE SYSTEM</p><h1>実装・検証レポート</h1>
+        <p class="lead">四角形を描く基盤から、規則に基づく生成、時刻からのアニメーション評価まで。各Phaseの実装内容・設計判断・検証結果・引き継ぎ事項をまとめています。</p>
+        <div class="hero-metrics"><span><b>Phase {{LATEST_PHASE}}</b> まで実装</span><span><b>{{LATEST_TESTS}}</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
+      </header>
+      <section aria-labelledby="progress-title"><div class="section-heading"><h2 id="progress-title">ここまでの実装</h2><span>各カードから全文へ移動できます</span></div><div class="phase-cards">{{CARDS}}</div></section>
+      <p class="overview-note">各Phaseの本文は、そのPhaseを完了した時点の記録です。「未実装」「次Phase」は当時の状態を示します。スライダー入力のレビュー対応も収録しています。</p>
+      <section class="validation" aria-labelledby="validation-title"><div class="section-heading"><h2 id="validation-title">検証結果の一覧</h2><span>Markdown原本の記録値</span></div>
+        <table><thead><tr><th scope="col">Phase</th><th scope="col">テスト</th><th scope="col">ビルド</th><th scope="col">確認日</th></tr></thead><tbody>{{VALIDATION}}</tbody></table>
+        <p>テスト数は各Phase時点の累計です。今回は原本のHTML化を行い、過去の検証を再実施したものではありません。未検証事項・警告は各Phase本文に記載しています。</p>
+      </section>
+      {{PLANNED}}
+      {{RECORDS}}
+      <section id="usage" class="usage" aria-labelledby="usage-title"><h2 id="usage-title">このレポートについて</h2>
+        <p><code>docs/phases/phase-*-result.md</code> を原本として生成したHTML版です。本文はすべてこのファイルに含まれ、インターネット接続や開発サーバーなしで閲覧できます。Markdown原本・README・公式資料へのリンクは、移動先のファイルまたは通信が必要です。</p>
+        <p>更新する場合はMarkdown原本を編集し、<strong>リポジトリのルート</strong>で <code>npm run docs:report</code> を実行してください。</p>
+        <p>「印刷 / PDF保存」で全Phaseをまとめて印刷できます。ブラウザのページ内検索で、ファイル名・API名・検証項目を探せます。</p>
+      </section>
+      <footer>Generative Slide System · Phase {{RANGE}} · 実装記録のHTML版</footer>
+    </main>
+  </div>
+  <script>document.getElementById('print-report').addEventListener('click', () => window.print())</script>
+</body>
+</html>

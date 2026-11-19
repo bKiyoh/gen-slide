@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "docs:report": "node scripts/build-implementation-report.mjs",
     "test": "node --test"
   },
   "dependencies": {
