@@ -37,10 +37,7 @@ export function validateProject(project) {
     claimId(transition.id)
     if (typeof transition.name !== 'string' || !transition.name.trim()) throw new RangeError('Transition名を入力してください。')
     if (!Number.isFinite(transition.switchAtMs) || transition.switchAtMs < 0 || transition.switchAtMs > transition.durationMs) throw new RangeError('switchAtMs は0〜durationMsで指定してください。')
-    const cover = transition.cover
-    if (!cover || typeof cover.enabled !== 'boolean' || typeof cover.color !== 'string' || !/^#[0-9a-f]{6}$/i.test(cover.color)
-      || !Number.isFinite(cover.fromMs) || !Number.isFinite(cover.toMs)
-      || cover.fromMs < 0 || cover.fromMs > cover.toMs || cover.toMs > transition.durationMs) throw new RangeError('coverの色と時刻範囲（0 ≤ from ≤ to ≤ duration）を確認してください。')
+    // 旧JSONのcoverは互換性のため保持するが、検証・描画には使用しない。
     evaluateTransition(transition, 0) // 型・重複キー・未対応property・Staggerも検証
     evaluateTransition(transition, transition.durationMs)
     for (const layer of transition.layers) {
@@ -60,6 +57,7 @@ export function validateProject(project) {
   for (const slide of project.slides) {
     if (!slide || typeof slide !== 'object' || Array.isArray(slide)) throw new RangeError('Slideはオブジェクトで指定してください。')
     claimId(slide.id)
+    if (typeof slide.component !== 'string' || !slide.component.trim()) throw new RangeError('Slideのcomponentは文字列キーで指定してください。')
     if (slide.transitionId !== undefined && slide.transitionId !== null && !transitionIds.has(slide.transitionId)) throw new RangeError('Slideが存在しないTransitionを参照しています。')
   }
   return project
@@ -67,13 +65,11 @@ export function validateProject(project) {
 
 export function createProject() {
   const transition = createSampleAnimatedTransition()
-  transition.cover = { enabled: true, color: '#182436', fromMs: 550, toMs: 650 }
   return { schemaVersion: 1, transitions: [transition], slides: [] }
 }
 
 export function createTransition(id) {
-  return { id, name: '新しいTransition', durationMs: 1200, switchAtMs: 600, layers: [],
-    cover: { enabled: true, color: '#182436', fromMs: 550, toMs: 650 } }
+  return { id, name: '新しいTransition', durationMs: 1200, switchAtMs: 600, layers: [] }
 }
 
 /** 小さなトランザクション。検証成功まで現在のProjectを変更しない。 */

@@ -6,14 +6,15 @@ import { fitCanvas } from '../fitCanvas.js'
 import { createShapeMeshes } from './shapeMeshes.js'
 
 /**
- * Vue からは init / updateShapes / dispose だけを呼ぶ。
+ * Vue から init / updateShapes / prepareShapes / dispose を呼ぶ。
  * Three.js インスタンスはこのクロージャー内に保持し、Vue のリアクティブ化を避ける。
  * @param {HTMLElement} container
  * @param {(status: {state: string, backend: string, message: string}) => void} onStatus
+ * @param {{transparent?: boolean}} [options]
  */
-export function createShapeRenderer(container, onStatus) {
+export function createShapeRenderer(container, onStatus, { transparent = false } = {}) {
   const scene = new Scene()
-  scene.background = new Color('#f5f3ee')
+  scene.background = transparent ? null : new Color('#f5f3ee')
   // left / right / top / bottom。カメラの投影だけで Y下向きを実現する。
   const camera = new OrthographicCamera(0, LOGICAL_SIZE.width, 0, LOGICAL_SIZE.height, 0.1, 100)
   camera.position.z = 10
@@ -24,6 +25,7 @@ export function createShapeRenderer(container, onStatus) {
   let releaseTask = null
   let disposed = false
   let failed = false
+  let preparationTask = null
   let backend = '判定不能'
 
   function reportError(error) {
@@ -34,13 +36,15 @@ export function createShapeRenderer(container, onStatus) {
   }
 
   function render() {
-    if (!disposed && !failed && renderer?.initialized) renderer.render(scene, camera)
+    if (!disposed && !failed && !preparationTask && renderer?.initialized) renderer.render(scene, camera)
   }
 
   function resize() {
     if (disposed || failed || !renderer?.initialized) return
     try {
-      const { width, height } = fitCanvas(container.clientWidth, container.clientHeight)
+      // DOMスライドと同じ小数CSS pxを保持し、狭い画面でも端を一致させる。
+      const bounds = container.getBoundingClientRect()
+      const { width, height } = fitCanvas(bounds.width, bounds.height)
       if (width === 0 || height === 0) return
       // CSS px と GPU の画素数は別。高DPIは最大2倍に制限してメモリー消費を抑える。
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
@@ -52,7 +56,7 @@ export function createShapeRenderer(container, onStatus) {
   }
 
   /** @param {import('../../domain/shapes.js').Shape[]} shapes */
-  function updateShapes(shapes) {
+  function applyShapes(shapes) {
     // 全件の検証を終えてから Scene に反映。不正な入力では直前の描画を維持する。
     const ids = new Set()
     for (const shape of shapes) {
@@ -61,10 +65,24 @@ export function createShapeRenderer(container, onStatus) {
       if (ids.has(shape.id)) throw new RangeError('Duplicate shape ID')
       ids.add(shape.id)
     }
-    if (disposed || failed || !renderer?.initialized) return
+    if (disposed || failed || !renderer?.initialized) return false
 
     shapeMeshes.update(shapes)
-    render()
+    return true
+  }
+
+  function updateShapes(shapes) {
+    if (applyShapes(shapes)) render()
+  }
+
+  /** Presentationの開始前にシェーダーを準備する。r187のcompileAsyncを使用。 */
+  async function prepareShapes(shapes) {
+    if (preparationTask) await preparationTask
+    if (!applyShapes(shapes)) throw new Error('描画バックエンドを利用できません。')
+    preparationTask = renderer.compileAsync(scene, camera)
+    try { await preparationTask }
+    finally { preparationTask = null }
+    if (disposed || failed) throw new Error('描画の準備が中断されました。')
   }
 
   function detach() {
@@ -112,7 +130,8 @@ export function createShapeRenderer(container, onStatus) {
     initTask = (async () => {
       try {
         // バックエンド選択・フォールバックは Three.js に任せる。
-        renderer = new WebGPURenderer({ antialias: true })
+        renderer = new WebGPURenderer({ antialias: true, alpha: true })
+        if (transparent) renderer.setClearColor(new Color('#000000'), 0)
         renderer.onDeviceLost = info => reportError(`描画デバイスを利用できなくなりました: ${info.message}`)
         renderer.onError = info => reportError(`GPU 描画エラー: ${info.message}`)
         await renderer.init()
@@ -154,9 +173,10 @@ export function createShapeRenderer(container, onStatus) {
     // Vue のアンマウント自体は待たせず、GPU初期化の決着後も必ず解放する。
     return (async () => {
       await initTask
+      try { await preparationTask } catch { /* コンパイル失敗後も必ず解放する。 */ }
       await releaseResources()
     })()
   }
 
-  return { init, updateShapes, dispose }
+  return { init, updateShapes, prepareShapes, dispose }
 }

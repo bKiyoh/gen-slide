@@ -1,5 +1,6 @@
 import { computed, onUnmounted, reactive, ref, shallowRef, watch } from 'vue'
-import { applyProjectEdit, createProject, createTransition, duplicateTransition, nextId, parseProject, serializeProject } from '../domain/project/project.js'
+import { applyProjectEdit, createTransition, duplicateTransition, nextId, parseProject, serializeProject } from '../domain/project/project.js'
+import { createInitialProject } from '../domain/project/presentationSample.js'
 import { createSampleShapes } from '../domain/shapes.js'
 import { createSampleTransition } from '../domain/transition/sampleTransition.js'
 import { evaluateTransition } from '../domain/transition/evaluateTransition.js'
@@ -7,11 +8,14 @@ import { createPlaybackClock } from './playbackClock.js'
 import { createProjectStorage, readStoredProject } from './projectStorage.js'
 import { editBaseDisplay } from './displayValues.js'
 
-export function useEditor() {
+export function useEditor(initialProject) {
   const getStorage = () => window.localStorage
-  const restored = readStoredProject(getStorage, createProject)
+  const restored = readStoredProject(getStorage, createInitialProject)
+  if (initialProject) restored.project = parseProject(JSON.stringify(initialProject))
   const project = shallowRef(restored.project)
   const transitionId = ref(project.value.transitions[0]?.id ?? '')
+  const previewSlideId = ref(null)
+  const previewSlide = computed(() => project.value.slides.find(slide => slide.id === previewSlideId.value) ?? null)
   const selection = ref(null)
   const scope = ref('shape')
   const mode = ref('base')
@@ -32,17 +36,18 @@ export function useEditor() {
     catch (exception) { return { shapes: [], error: exception.message } }
   })
   const renderShapes = shallowRef([])
-  const coverActive = computed(() => Boolean(transition.value?.cover.enabled
-    && timeMs.value >= transition.value.cover.fromMs && timeMs.value <= transition.value.cover.toMs))
-  watch([snapshot, coverActive], ([state, cover]) => {
+  watch(snapshot, state => {
     if (state.error) { error.value = state.error; clock.pause(); return }
-    renderShapes.value = cover ? [...state.shapes, { id: '$editor/cover', geometry: { type: 'rectangle', width: 1920, height: 1080, skewX: 0 },
-      style: { color: transition.value.cover.color, opacity: 1 }, transform: { x: 960, y: 540, rotation: 0 } }] : state.shapes
+    renderShapes.value = state.shapes
   }, { immediate: true })
 
   function commit(edit) {
     try {
       project.value = applyProjectEdit(project.value, edit)
+      if (previewSlideId.value) {
+        if (!previewSlide.value) selectTransition(project.value.transitions[0]?.id ?? '')
+        else if (transitionId.value !== (previewSlide.value.transitionId ?? '')) selectSlide(previewSlideId.value)
+      }
       error.value = ''
       if (timeMs.value > (transition.value?.durationMs ?? 0)) clock.seek(transition.value?.durationMs ?? 0)
       persistence.schedule(project.value)
@@ -50,7 +55,13 @@ export function useEditor() {
     } catch (exception) { error.value = exception.message; return false }
   }
   function editTransition(edit) { return commit(draft => edit(draft.transitions.find(t => t.id === transitionId.value))) }
-  function selectTransition(id) { clock.stop(); transitionId.value = id; selection.value = null }
+  function selectTransition(id) { clock.stop(); transitionId.value = id; selection.value = null; previewSlideId.value = null }
+  function selectSlide(id) {
+    const slide = project.value.slides.find(slide => slide.id === id)
+    if (!slide) return
+    selectTransition(slide.transitionId ?? '')
+    previewSlideId.value = id
+  }
   function selectLayer(layerId, itemId) {
     selection.value = itemId ? { layerId, itemId } : { layerId }
     scope.value = itemId ? 'individual' : transition.value.layers.find(layer => layer.id === layerId).kind === 'group' ? 'group' : 'shape'
@@ -133,8 +144,8 @@ export function useEditor() {
   window.addEventListener('pagehide', flush)
   if (!restored.blocked) persistence.schedule(project.value)
   onUnmounted(() => { clock.dispose(); persistence.flush(); window.removeEventListener('pagehide', flush) })
-  return reactive({ project, transition, transitionId, layer, selection, scope, mode, timeMs, playing, error, saveStatus, storageBlocked, pendingImport,
-    renderShapes, coverActive, commit, editTransition, selectTransition, selectLayer, addTransition, copyTransition, removeTransition,
+  return reactive({ project, transition, transitionId, previewSlide, layer, selection, scope, mode, timeMs, playing, error, saveStatus, storageBlocked, pendingImport,
+    renderShapes, commit, editTransition, selectTransition, selectSlide, selectLayer, addTransition, copyTransition, removeTransition,
     addLayer, copyLayer, removeLayer, moveLayer, editBase, seek, play: clock.play, pause: clock.pause, stop: clock.stop,
-    prepareImport, applyImport, exportProject, retryRestore, retrySave: () => persistence.unblock(project.value) })
+    prepareImport, applyImport, exportProject, retryRestore, flush, retrySave: () => persistence.unblock(project.value) })
 }

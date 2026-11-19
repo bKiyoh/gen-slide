@@ -87,6 +87,7 @@ const descriptions = {
   1: { title: '規則から生成', summary: 'Linear / Grid配置、Modifier、個別Overrides。生成数を変えても設定を保持。' },
   2: { title: '時刻から評価', summary: 'Keyframe、Easing、Stagger。Group / Child / Individualを合成し、任意の時点を再現。' },
   3: { title: '編集・再生・保存', summary: '4領域のEditorでTransitionを制作。画面値の編集、再生、JSON入出力、自動保存と復元に対応。' },
+  4: { title: 'スライド間の演出', summary: '保存したTransitionをVueスライドへ割り当て。指定時刻で一度だけ切り替え、描画失敗時も発表を継続。' },
 }
 const filenames = (await readdir(new URL('docs/phases/', root)))
   .filter(name => /^phase-\d+-result\.md$/.test(name))

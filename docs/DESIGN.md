@@ -81,19 +81,13 @@ const transition = {
   name: 'Diagonal Sweep',
   durationMs: 1200,
   switchAtMs: 600,
-  layers: [], // Shape または ShapeGroup。配列順が表示順の基準
-  cover: {
-    enabled: true,
-    color: '#FF0000',
-    fromMs: 550,
-    toMs: 650
-  }
+  layers: [] // Shape または ShapeGroup。配列順が表示順の基準
 }
 ```
 
 - `switchAtMs` は `0 <= switchAtMs <= durationMs`。
-- `cover` はスライドの DOM を切り替える瞬間に背後を確実に隠すための安全策。範囲は一例であり、アニメーション全体での視覚効果に合わせて調整する。
-- `cover` が無効な場合は、その時点で意匠自体が完全に不透明で画面を覆う必要がある。初期段階では `cover` を有効にする。
+- `switchAtMs` に達した最初のフレームで、図形が画面を覆うかどうかに関わらずスライドを一度だけ切り替える。遮蔽は演出の表現として任意に設計する。
+- 2026-11-19のユーザーフィードバックを受け、単色の `cover` 機能と全画面遮蔽の必須判定を廃止した。旧JSONの `cover` は読み書き時に保持し、描画・再生条件には使わない。
 
 ### 4.3 Shape（単体）
 
@@ -239,7 +233,6 @@ const renderState = evaluateTransition(transition, timeMs)
 Slide A 表示
   → 次へ操作
   → 指定された Transition を再生
-  → cover または意匠で画面が不透明になった時点
   → switchAtMs で DOM を Slide B に切り替え（1回だけ）
   → アニメーション後半を再生
   → Canvasを透明に戻し Slide B を表示

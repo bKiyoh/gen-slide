@@ -22,12 +22,11 @@ test('Project: JSON往復で状態と評価が一致。UI/DOM/GPUを含めない
   }
 })
 
-test('Project検証: スキーマ、参照、ID、cover、途中のキーの異常を拒否', () => {
+test('Project検証: スキーマ、参照、ID、時刻、途中のキーの異常を拒否', () => {
   for (const edit of [
     p => { p.schemaVersion = 2 }, p => { p.transitions[0].name = '' },
-    p => { p.transitions[0].switchAtMs = 1300 }, p => { p.transitions[0].cover.fromMs = 700 },
-    p => { p.transitions[0].cover.color = ['#FFFFFF'] },
-    p => { p.slides = [{ id: 'slide-001', transitionId: 'missing' }] },
+    p => { p.transitions[0].switchAtMs = 1300 }, p => { p.transitions[0].durationMs = -1 },
+    p => { p.slides = [{ id: 'slide-001', component: 'TitleSlide', transitionId: 'missing' }] },
     p => { p.transitions[0].layers[0].id = p.transitions[0].id },
     p => { p.transitions[0].layers[0].tracks = [{ property: 'style.opacity', mode: 'offset', keyframes: [{ timeMs: 0, value: 0 }, { timeMs: 400, value: 1 }, { timeMs: 1200, value: 0 }] }] },
     p => { p.transitions[0].layers[1].overrides['item-999'] = { tracks: [{ property: 'transform.x', mode: 'absolute', keyframes: [{ timeMs: 0, value: 0 }, { timeMs: 0, value: 1 }] }] } },
