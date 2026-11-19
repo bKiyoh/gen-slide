@@ -1,6 +1,8 @@
 # Generative Slide System
 
-Vue 3 + Three.js の図形生成・描画サンプル。現在は **Phase 2** まで実装しています。
+Vue 3 + Three.js の図形生成・制作ツール。現在は **Phase 3** まで実装しています。
+
+初期画面はTransition Editorです。レイヤー・プレビュー・プロパティ・タイムラインの4領域で、図形生成、個別設定、キーフレーム、再生・シークを操作できます。確定したProjectは約500ms後にlocalStorageへ自動保存され、JSONの出力・検証付き読み込みにも対応します。保存状態とエラーは画面上部に表示します。
 
 Phase 2 の画面では、時刻スライダーで0〜1200 msを指定し、時間差のある移動・回転とGroup全体の移動を確認できます。白い3番目の図形は独自の回転を持ちます。時刻を前後に動かしても同じ状態を再現します。確認用の時刻指定画面で、自動再生は後続Phaseの対象です。
 
@@ -10,7 +12,7 @@ Phase 2 の画面では、時刻スライダーで0〜1200 msを指定し、時�
 
 ## HTML版の実装記録
 
-[実装・検証レポート](docs/implementation-report.html) に、Phase 0〜2の記録全文・検証結果一覧・目次と、今後のPhase 3〜6の未着手枠をまとめています。今後のPhaseは見出しだけを載せ、実装記録の追加後に本文を表示します。HTMLファイルをブラウザで直接開けます。本文の閲覧にインターネット接続や開発サーバーは不要です。「印刷 / PDF保存」も利用できます。
+[実装・検証レポート](docs/implementation-report.html) に、Phase 0〜3の記録全文・検証結果一覧・目次と、今後のPhase 4〜6の未着手枠をまとめています。今後のPhaseは見出しだけを載せ、実装記録の追加後に本文を表示します。HTMLファイルをブラウザで直接開けます。本文の閲覧にインターネット接続や開発サーバーは不要です。「印刷 / PDF保存」も利用できます。
 
 原本は `docs/phases/phase-*-result.md` です。記録を更新した場合は、**リポジトリのルート**で次を実行してHTML版を再生成します。
 
@@ -47,6 +49,6 @@ Phase 1 の画面では「2個に減らす」→「10個に戻す」で白い図
 
 幅・高さ・傾斜、配置の間隔・位置・オフセット、グループの回転・倍率はスライダーで調整できます。併設の数値入力で細かい値を指定でき、通常のスライダー範囲を超える有効値を入力すると範囲も広がります。個数・行数・列数は数値入力、色はHEX入力です。
 
-「プレビューを停止」で描画コンポーネントをアンマウントし、「プレビューを開始」で再初期化できます。入力は保存されません。サンプル画面の切り替えでは入力が初期化されます。
+「プレビューを停止」で描画コンポーネントをアンマウントし、「プレビューを開始」で再初期化できます。EditorのProjectは自動保存されます。Phase 0〜2の検証サンプルの入力は保存されず、サンプル画面の切り替えで初期化されます。
 
-評価API・処理フロー・ファイル一覧・動作確認結果・Phase 3への契約は [Phase 2 実装・検証記録](docs/phases/phase-2-result.md) を参照してください。静的生成は [Phase 1 実装・検証記録](docs/phases/phase-1-result.md)、描画基盤は [Phase 0 実装・検証記録](docs/phases/phase-0-result.md)、全体設計は [DESIGN](docs/DESIGN.md)、要件は [SPECIFICATION](docs/SPECIFICATION.md) にあります。
+Editorの操作・保存・編集制限・検証結果は [Phase 3 実装・検証記録](docs/phases/phase-3-result.md)、評価APIは [Phase 2 実装・検証記録](docs/phases/phase-2-result.md) を参照してください。静的生成は [Phase 1 実装・検証記録](docs/phases/phase-1-result.md)、描画基盤は [Phase 0 実装・検証記録](docs/phases/phase-0-result.md)、全体設計は [DESIGN](docs/DESIGN.md)、要件は [SPECIFICATION](docs/SPECIFICATION.md) にあります。

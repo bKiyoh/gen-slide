@@ -86,6 +86,7 @@ const descriptions = {
   0: { title: '描画基盤', summary: 'VueとThree.jsをつなぎ、四角形を描画。入力・リサイズ・GPUの後始末を確認。' },
   1: { title: '規則から生成', summary: 'Linear / Grid配置、Modifier、個別Overrides。生成数を変えても設定を保持。' },
   2: { title: '時刻から評価', summary: 'Keyframe、Easing、Stagger。Group / Child / Individualを合成し、任意の時点を再現。' },
+  3: { title: '編集・再生・保存', summary: '4領域のEditorでTransitionを制作。画面値の編集、再生、JSON入出力、自動保存と復元に対応。' },
 }
 const filenames = (await readdir(new URL('docs/phases/', root)))
   .filter(name => /^phase-\d+-result\.md$/.test(name))

@@ -22,6 +22,7 @@ export function validateModifiers(modifiers) {
   if (!Array.isArray(modifiers)) throw new RangeError('modifiers は配列で指定してください。')
   for (const modifier of modifiers) {
     if (!modifier || !MODIFIER_PROPERTIES.includes(modifier.property)) throw new RangeError('未対応の Modifier プロパティです。')
+    if (modifier.enabled !== undefined && typeof modifier.enabled !== 'boolean') throw new RangeError('Modifier.enabled は真偽値で指定してください。')
     if (modifier.type === 'alternate') {
       if (!Array.isArray(modifier.values) || modifier.values.length === 0) throw new RangeError('alternate.values は空でない配列が必要です。')
       for (const value of modifier.values) validatePropertyValue(modifier.property, value)
@@ -46,6 +47,7 @@ export function copyShape(shape) {
 export function applyModifiers(shape, modifiers, index, total) {
   const result = copyShape(shape)
   for (const modifier of modifiers) {
+    if (modifier.enabled === false) continue
     const value = modifier.type === 'alternate' ? modifier.values[index % modifier.values.length]
       : total <= 1 ? modifier.from : modifier.from + (modifier.to - modifier.from) * index / (total - 1)
     const [section, key] = modifier.property.split('.')

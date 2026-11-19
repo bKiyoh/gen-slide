@@ -21,8 +21,8 @@ const limits = computed(() => {
     ? Math.min(props.max, Math.max(props.min, props.modelValue))
     : Math.min(props.max, Math.max(props.min, 0))
   return {
-    min: Math.min(props.sliderMin ?? props.min, current),
-    max: Math.max(props.sliderMax ?? props.max, current),
+    min: Math.min(Math.min(props.max, Math.max(props.min, props.sliderMin ?? props.min)), current),
+    max: Math.max(Math.min(props.max, Math.max(props.min, props.sliderMax ?? props.max)), current),
     current,
   }
 })

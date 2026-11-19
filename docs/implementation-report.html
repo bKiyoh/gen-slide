@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Generative Slide SystemのPhase 0–2の実装・検証記録。機能、設計判断、処理フロー、検証結果、制約と引き継ぎ。" />
+  <meta name="description" content="Generative Slide SystemのPhase 0–3の実装・検証記録。機能、設計判断、処理フロー、検証結果、制約と引き継ぎ。" />
   <title>実装・検証レポート — Generative Slide System</title>
   <style>
     :root { color-scheme: light; --paper:#faf9f6; --ink:#24303f; --muted:#626f7c; --line:#dedfdc; --blue:#315db6; --red:#d65d4a; --green:#26725d; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif; line-height:1.85; }
@@ -115,17 +115,17 @@
       <p class="caption">Implementation &amp; validation<br />開発の積み上げを、一つの記録に。</p>
       <nav aria-label="Phaseの目次"><a href="#overview"><span>↗</span> 全体概要</a><a href="#phase-0"><span>00</span> 描画基盤</a>
 <a href="#phase-1"><span>01</span> 規則から生成</a>
-<a href="#phase-2"><span>02</span> 時刻から評価</a><a href="#phase-3"><span>03</span> Phase 3 · 未着手</a>
-<a href="#phase-4"><span>04</span> Phase 4 · 未着手</a>
+<a href="#phase-2"><span>02</span> 時刻から評価</a>
+<a href="#phase-3"><span>03</span> 編集・再生・保存</a><a href="#phase-4"><span>04</span> Phase 4 · 未着手</a>
 <a href="#phase-5"><span>05</span> Phase 5 · 未着手</a>
 <a href="#phase-6"><span>06</span> Phase 6 · 未着手</a><a href="#usage"><span>?</span> このレポートについて</a></nav>
-      <div class="sidebar-bottom">収録範囲 Phase 0–2<br />記録の最新確認日 2026-11-19<a href="../README.md">READMEを見る ↗</a></div>
+      <div class="sidebar-bottom">収録範囲 Phase 0–3<br />記録の最新確認日 2026-11-19<a href="../README.md">READMEを見る ↗</a></div>
     </aside>
     <main id="overview">
-      <div class="topbar"><span>ENGINEERING REPORT / PHASE 0–2</span><button type="button" id="print-report">印刷 / PDF保存</button></div>
+      <div class="topbar"><span>ENGINEERING REPORT / PHASE 0–3</span><button type="button" id="print-report">印刷 / PDF保存</button></div>
       <header class="hero"><p class="eyebrow">GENERATIVE SLIDE SYSTEM</p><h1>実装・検証レポート</h1>
-        <p class="lead">四角形を描く基盤から、規則に基づく生成、時刻からのアニメーション評価まで。各Phaseの実装内容・設計判断・検証結果・引き継ぎ事項をまとめています。</p>
-        <div class="hero-metrics"><span><b>Phase 2</b> まで実装</span><span><b>54</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
+        <p class="lead">四角形を描く基盤から、規則に基づく生成、時刻からのアニメーション評価、編集・保存まで。各Phaseの実装内容・設計判断・検証結果・引き継ぎ事項をまとめています。</p>
+        <div class="hero-metrics"><span><b>Phase 3</b> まで実装</span><span><b>67</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
       </header>
       <section aria-labelledby="progress-title"><div class="section-heading"><h2 id="progress-title">ここまでの実装</h2><span>各カードから全文へ移動できます</span></div><div class="phase-cards"><a class="phase-card" href="#phase-0">
   <span class="phase-label">PHASE 00</span><h3>描画基盤</h3>
@@ -138,16 +138,20 @@
 <a class="phase-card" href="#phase-2">
   <span class="phase-label">PHASE 02</span><h3>時刻から評価</h3>
   <p>Keyframe、Easing、Stagger。Group / Child / Individualを合成し、任意の時点を再現。</p>
-  <div class="card-meta"><span><b>54</b> テスト成功</span><span>詳細へ ↗</span></div></a></div></section>
+  <div class="card-meta"><span><b>54</b> テスト成功</span><span>詳細へ ↗</span></div></a>
+<a class="phase-card" href="#phase-3">
+  <span class="phase-label">PHASE 03</span><h3>編集・再生・保存</h3>
+  <p>4領域のEditorでTransitionを制作。画面値の編集、再生、JSON入出力、自動保存と復元に対応。</p>
+  <div class="card-meta"><span><b>67</b> テスト成功</span><span>詳細へ ↗</span></div></a></div></section>
       <p class="overview-note">各Phaseの本文は、そのPhaseを完了した時点の記録です。「未実装」「次Phase」は当時の状態を示します。スライダー入力のレビュー対応も収録しています。</p>
       <section class="validation" aria-labelledby="validation-title"><div class="section-heading"><h2 id="validation-title">検証結果の一覧</h2><span>Markdown原本の記録値</span></div>
         <table><thead><tr><th scope="col">Phase</th><th scope="col">テスト</th><th scope="col">ビルド</th><th scope="col">確認日</th></tr></thead><tbody><tr><th scope="row">Phase 0</th><td>18件成功</td><td><span class="success">成功</span></td><td>2026-11-18</td></tr>
 <tr><th scope="row">Phase 1</th><td>33件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
-<tr><th scope="row">Phase 2</th><td>54件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr></tbody></table>
+<tr><th scope="row">Phase 2</th><td>54件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
+<tr><th scope="row">Phase 3</th><td>67件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr></tbody></table>
         <p>テスト数は各Phase時点の累計です。今回は原本のHTML化を行い、過去の検証を再実施したものではありません。未検証事項・警告は各Phase本文に記載しています。</p>
       </section>
-      <section id="upcoming" class="upcoming" aria-labelledby="upcoming-title"><div class="section-heading"><h2 id="upcoming-title">今後のPhase</h2><span>本文は実装後に追記</span></div><div id="phase-3" class="planned-phase"><div><p class="phase-label">PHASE 03</p><h3>Transition Editor・タイムライン・保存</h3></div><span class="planned-status">未着手</span></div>
-<div id="phase-4" class="planned-phase"><div><p class="phase-label">PHASE 04</p><h3>Presentation連携・スライド間Transition</h3></div><span class="planned-status">未着手</span></div>
+      <section id="upcoming" class="upcoming" aria-labelledby="upcoming-title"><div class="section-heading"><h2 id="upcoming-title">今後のPhase</h2><span>本文は実装後に追記</span></div><div id="phase-4" class="planned-phase"><div><p class="phase-label">PHASE 04</p><h3>Presentation連携・スライド間Transition</h3></div><span class="planned-status">未着手</span></div>
 <div id="phase-5" class="planned-phase"><div><p class="phase-label">PHASE 05</p><h3>直接操作・キーフレームのドラッグ・Undo / Redo</h3></div><span class="planned-status">未着手</span></div>
 <div id="phase-6" class="planned-phase"><div><p class="phase-label">PHASE 06</p><h3>Generator / Modifier・表現力の拡張（任意）</h3></div><span class="planned-status">未着手</span></div></section>
       <article id="phase-0" class="phase-report" aria-labelledby="phase-0-title">
@@ -528,12 +532,188 @@ npm run preview</code></pre>
 <li>Projectの保存対象は元のTransitionです。評価結果のworldMatrixやデモの現在時刻は保存データに混ぜないでください。</li>
 <li>生成順ID・OverrideキーはPhase 1から継続し、Individualのトラックは <code>overrides[itemId].tracks</code> です。</li>
 <li>Safari / Firefox、別GPU、物理的なデバイスロスト、1000個での性能は未検証です。全時刻のトラック有効性を事前保証する検証や編集時の逆変換も未実装です。</li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
+<article id="phase-3" class="phase-report" aria-labelledby="phase-3-title">
+  <header class="report-header"><div><p class="phase-label">PHASE 03 / IMPLEMENTATION RECORD</p>
+  <h2 id="phase-3-title">編集・再生・保存<span>実装・検証記録</span></h2></div>
+  <a class="source-link" href="phases/phase-3-result.md">Markdown原本 ↗</a></header>
+  <div class="report-meta"><span>確認日 <time datetime="2026-11-19">2026-11-19</time></span><span>テスト <b>67件成功</b></span><span>ビルド <b>成功</b></span></div>
+  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-3-section-0">作業前の分割コミット</a></li><li><a href="#phase-3-section-1">実装した機能</a></li><li><a href="#phase-3-section-2">追加・変更ファイル</a></li><li><a href="#phase-3-section-3">主な設計判断</a></li><li><a href="#phase-3-section-4">画面値の編集と制限</a></li><li><a href="#phase-3-section-5">再生・cover・GPUの処理フロー</a></li><li><a href="#phase-3-section-7">保存・復元・JSONの契約</a></li><li><a href="#phase-3-section-8">操作・動作確認手順</a></li><li><a href="#phase-3-section-9">ビルド・テスト結果</a></li><li><a href="#phase-3-section-10">レビュー対応：UI全体の統一</a></li><li><a href="#phase-3-section-14">完了条件とPhase 4への引き継ぎ</a></li></ul></details>
+  <div class="record-body"><p>確認日: 2026-11-19。Phase 4以降は実装していません。</p>
+<h3 id="phase-3-section-0">作業前の分割コミット</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="作業前の分割コミット"><table><thead><tr><th scope="col">コミット</th><th scope="col">内容</th></tr></thead><tbody><tr><td><code>31b5325</code></td><td>Phase 2のAnimation Evaluator、時刻指定デモ、テスト、Phase 2実装記録</td></tr>
+<tr><td><code>6b92ccf</code></td><td>HTMLレポート生成、今後のPhaseの未着手枠、報告方法・判断依頼フォームのAGENTS.md規約</td></tr></tbody></table></div>
+<p>READMEも変更内容に応じて分割しています。Phase 3の変更は現時点で未コミットです。</p>
+<h3 id="phase-3-section-1">実装した機能</h3>
+<ul><li>レイヤー・プレビュー・プロパティ・タイムラインの4領域のTransition Editor。</li>
+<li>Transitionの新規作成・選択・名前変更・複製・削除、durationMs / switchAtMs / coverの設定。</li>
+<li>Shape / Groupの追加・選択・複製・削除・奥行き順変更、生成子の選択。</li>
+<li>図形、Group、Template、Linear / Grid Generator、Alternate / Linear Modifier、個別OverridesのGUI編集。</li>
+<li>Modifierの有効・無効、順序変更、同じ項目の後勝ち表示、Override項目ごとの解除。</li>
+<li>ベース編集とキーフレーム編集の切り替え。明示的なトラック・キーの追加、値・時刻・Easingの変更、削除。</li>
+<li>Group / Child / Individualの編集、Stagger、現在時刻の画面表示値からの逆算。</li>
+<li>実経過時間による再生・一時停止・再開・停止・シークと終端停止。</li>
+<li>16:9のプレビュー、選択図形の輪郭表示、指定区間でのcover表示。</li>
+<li>約500msのデバウンス自動保存、保存データの復元、JSON出力と検証・確認付き読み込み。</li>
+<li>不正入力時の更新拒否、保存失敗時の作業保持、復元失敗時の元データ保護。</li></ul>
+<h3 id="phase-3-section-2">追加・変更ファイル</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="追加・変更ファイル"><table><thead><tr><th scope="col">ファイル</th><th scope="col">責務</th></tr></thead><tbody><tr><td><code>src/domain/project/project.js</code></td><td>Project生成、スキーマ・参照・ID・描画状態・キー端点の検証、JSON入出力、原子的な編集、ID生成とTransition複製</td></tr>
+<tr><td><code>src/domain/transition/modifiers.js</code></td><td>enabledの検証と無効なルールの適用スキップ。未指定は従来どおり有効</td></tr>
+<tr><td><code>src/editor/displayValues.js</code></td><td>画面値の計算、親行列の逆変換、ベースとキーへの書き戻し、同時刻X/Yキーの合成</td></tr>
+<tr><td><code>src/editor/playbackClock.js</code></td><td>RAFによる再生時計。経過時間・pause/resume・seek・終端・破棄を管理</td></tr>
+<tr><td><code>src/editor/projectStorage.js</code></td><td>復元、自動保存、保存状態、復元失敗時の上書き保留と再試行</td></tr>
+<tr><td><code>src/editor/useEditor.js</code></td><td>ProjectとUI状態の分離、編集経路の集約、選択、再生、cover、JSON確認・適用</td></tr>
+<tr><td><code>src/editor/fields.js</code></td><td>プロパティのラベル・単位・入力範囲</td></tr>
+<tr><td><code>src/editor/EditorView.vue</code></td><td>全体配置、Transition管理・設定、プレビュー、再生、保存と読込確認</td></tr>
+<tr><td><code>src/editor/components/LayerPanel.vue</code></td><td>階層表示、選択、追加・複製・削除・順序変更</td></tr>
+<tr><td><code>src/editor/components/PropertyPanel.vue</code></td><td>画面表示値、Template、Generator、Overridesと編集制限の表示</td></tr>
+<tr><td><code>src/editor/components/ModifierPanel.vue</code></td><td>Modifierの対象・方式・値・順序・有効状態の編集</td></tr>
+<tr><td><code>src/editor/components/TimelinePanel.vue</code></td><td>階層・トラック・キーの選択と編集、Stagger、シーク表示</td></tr>
+<tr><td><code>src/editor/components/EditorField.vue</code></td><td>入力途中のドラフトと確定済みデータを分ける数値・色入力</td></tr>
+<tr><td><code>src/components/NumberSlider.vue</code></td><td>通常操作範囲を実際の有効範囲内に制限。画面値へ変換された範囲にも対応</td></tr>
+<tr><td><code>src/components/ShapePreview.vue</code></td><td>任意の選択輪郭をSVGで重ねる。Three.jsの初期化・破棄は既存処理を継続</td></tr>
+<tr><td><code>src/App.vue</code>, <code>src/style.css</code></td><td>Editorを初期表示にし、過去サンプルを維持。狭い画面の縦並びとパネル内スクロール</td></tr>
+<tr><td><code>tests/editor.test.js</code></td><td>Project検証、編集の非破壊性、ID、逆変換、キー、保存失敗、再生時計の検証</td></tr>
+<tr><td><code>README.md</code>, <code>scripts/build-implementation-report.mjs</code>, <code>docs/implementation-report.html</code></td><td>操作案内とPhase 3のHTMLレポート更新</td></tr></tbody></table></div>
+<p>追加依存パッケージはありません。合意済み設計書、Phase指示書、Three.jsの低レベル描画処理は変更していません。</p>
+<h3 id="phase-3-section-3">主な設計判断</h3>
+<p>ProjectはshallowRefでプレーンなデータを保持し、選択ID・編集モード・時刻・再生状態・入力途中の値・DOM参照は別のUI状態に置いています。ProjectにはThree.jsオブジェクトやRAF IDを入れません。</p>
+<p>編集は <code>applyProjectEdit(project, edit)</code> に集約しています。現在のProjectを複製 → 一操作を適用 → 全体を検証 → 成功時だけ置換する流れです。無効な操作では元データも保存値も変えません。Undo/Redoや大規模なコマンドフレームワークは追加していません。</p>
+<p>IDはProject内のTransition・Layer・Slide全体で重複しないように生成します。Transitionの複製では配下Layerも新IDにします。GroupのOverrideキーとIndividualのトラックはそのまま複製し、元のデータと参照を共有しません。Transition削除時にSlideの参照があればnullへ解除します。Slide本体の編集・表示は今回の対象外です。</p>
+<h3 id="phase-3-section-4">画面値の編集と制限</h3>
+<p>位置は現在時刻の画面座標を表示・編集します。親Groupがある場合は、Animationを評価した親行列を逆変換し、子のローカル値へ戻します。片方の画面座標だけを変える操作でも、必要ならX/Y両方のローカル差分を更新し、もう片方の画面座標を保ちます。</p>
+<p>ベース編集では、現在のAnimationがoffsetなら、その差分を加算し直さず静的ベースだけを変更します。absoluteのキーで固定されている項目はベース変更で見た目が変わらないため、更新を拒否してキーフレーム編集またはトラック削除を案内します。ベース操作だけでキーは追加しません。</p>
+<p>Individualの位置キーを回転した親のもとで編集する場合、同時刻のX/Yキーを対で更新します。片方がない場合は拒否し、明示的な「位置キー追加 (X/Y)」で対を作るよう案内します。勝手に新しいキーを作る処理ではありません。</p>
+<p>Child共通のキー編集は、基準をitem-000と明示しています。表示値と親変換は基準図形から求め、各子への適用時だけStaggerを使います。基準図形の同じ項目をIndividualが上書きしている場合は共通キーの編集を拒否し、個別トラックの解除を案内します。</p>
+<p>以下の制限は該当UIにも表示しています。</p>
+<ul><li>親が正の一様scaleの場合、子の回転・倍率も画面値に換算して編集できます。</li>
+<li>親が非一様・反転・0倍率の場合、子の回転・倍率の画面値編集は無効にします。未対応の値をローカル値として代わりに表示しません。</li>
+<li>親が非一様scaleでも位置の逆変換は可能です。ただし行列式の絶対値が1e-12未満なら、不安定または非可逆として位置編集を拒否します。</li>
+<li>幅・高さ・傾斜はローカル形状のパラメーターと明示しています。Templateも生成・Modifier・Overrides・Animationより前のローカル基本値として明示しています。</li>
+<li>生成されていない子は、個数を増やして再表示するまで表示値を編集できません。保持中のOverridesは削除しません。</li>
+<li>キー値の表はキー時刻での表示値です。読込済みのduration外のキーは値編集を制限し、先に時刻を範囲内へ変更するよう案内します。</li></ul>
+<h3 id="phase-3-section-5">再生・cover・GPUの処理フロー</h3>
+<ol><li>Editorの再生時計が実経過時間から現在時刻を求めます。フレームの回数を足して時刻を作りません。</li>
+<li><code>evaluateTransition</code> が、その時刻の位置・回転・色・形状などをCPU上で計算します。停止・シークも同じ評価器を使います。</li>
+<li>既存Rendererへ同じIDの状態を渡します。移動・回転ではMesh・Geometry・Materialを再利用し、GPUに新しい変換で三角形を描くよう指示します。</li>
+<li>選択中の図形には、同じ4頂点と行列から求めた輪郭をSVGで重ねます。ドラッグ等の直接操作はありません。</li>
+<li>coverが有効でfromMs〜toMs内なら、全画面の不透明な長方形を最後に描きます。衝突を防ぐため保存Layerでは使えないスラッシュ入りの一時IDを使います。cover中は選択輪郭を隠します。</li>
+<li>switchAtMsはタイムラインに目印を表示するだけで、EditorではSlideを切り替えません。</li>
+<li>一時停止は時刻を保持し、再開はその時刻から続けます。停止は0へ戻り、終端後の再生は0から始まります。非表示タブ相当の時間ジャンプでも経過時間から終端に合わせます。</li>
+<li>アンマウント時はEditorのRAFを停止し、既存のRenderer / Geometry / Material / GPUDeviceを解放します。</li></ol>
+<h4 id="phase-3-section-6">暗転の調査：550〜650msのcover表示</h4>
+<p>確認日: 2026-11-19。初期サンプルで再現した一瞬の暗転は、スライド切替用の幕（cover）でした。初期設定はenabled=true、色は#182436、fromMs=550、toMs=650です。この区間だけ図形の手前へ全画面の不透明な長方形を描くため、濃紺一色に見えます。スライド本文の切替を隠すための設計上の機能で、Editorではその見え方をプレビューしています。</p>
+<p>ChromeのWebGPUで次を実測しました。プレビュー左上付近の背景ピクセルを読み、coverの状態とCanvasの同一性を確認しています。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="暗転の調査：550〜650msのcover表示"><table><thead><tr><th scope="col">指定時刻</th><th scope="col">幕の表示</th><th scope="col">背景ピクセル</th></tr></thead><tbody><tr><td>549ms</td><td>OFF</td><td>#F5F3EE</td></tr>
+<tr><td>550ms</td><td>ON</td><td>#182436</td></tr>
+<tr><td>600ms</td><td>ON</td><td>#182436</td></tr>
+<tr><td>650ms</td><td>ON</td><td>#182436</td></tr>
+<tr><td>651ms</td><td>OFF</td><td>#F5F3EE</td></tr>
+<tr><td>600ms・cover無効</td><td>OFF</td><td>#F5F3EE</td></tr></tbody></table></div>
+<p>この再現試験ではCanvasの作り直し、ページ例外、console errorはありませんでした。ユーザーが保存した個別Projectそのものは未確認のため、別の時刻に発生する暗転や、coverを無効にしても続く症状については同じ原因と断定していません。</p>
+<p>図形の動きだけを見る場合は「Transition設定」を開き、「スライド切替用の幕（cover）を表示」をOFFにできます。幕を残す場合もcover色・開始・終了を調整できます。設定に用途が伝わりにくかったため、チェックボックスと表示中のラベルを日本語で明確化し、全面を覆うことの説明を追加しました。初期値・保存データ・幕の描画ルールは変更していません。</p>
+<p>確認コマンドの実行場所はリポジトリのルートです。<code>npm run build</code> と <code>npm run docs:report</code>、<code>git diff --check</code> を実行しました。今回のアプリ変更は説明文のみのため、新しいユニットテストは追加していません。</p>
+<h3 id="phase-3-section-7">保存・復元・JSONの契約</h3>
+<ul><li>保存形式は <code>{ schemaVersion: 1, transitions: [...], slides: [...] }</code>。</li>
+<li>キーは <code>generative-slide-system.project.v1</code>。確定した編集後、約500msのデバウンスで最後のProjectを保存します。</li>
+<li>初回はPhase 2のサンプルをProjectに包んで開始します。有効な保存値があれば優先します。</li>
+<li>保存状態は保存中・保存済み・エラーを表示します。pagehideとEditorのアンマウントでも保留中の保存を試みます。</li>
+<li>読込失敗・破損・非対応スキーマでは自動上書きを保留します。元の保存文字列は変更せず、再取得とJSON入出力の手段を残します。</li>
+<li>書込失敗でも編集中のProjectは保持し、JSON出力または保存の再試行が可能です。</li>
+<li>JSON読込はパース・検証後に件数と置換の説明を表示し、「このJSONで置き換える」を押して初めて適用します。</li>
+<li>スキーマ、プレーンなJSON値、全体ID重複、SlideのTransition参照、負荷上限、cover範囲、不正・重複キー、全キー端点の結果を検証します。</li>
+<li>静的ベースに対するキー端点が範囲外になる入力も拒否します。現在の数値プロパティと単調なEasingでは各項目の値域確認に使えますが、将来の複雑な制約・新Easingの全時刻の有効性を一般的に証明するものではありません。</li></ul>
+<h3 id="phase-3-section-8">操作・動作確認手順</h3>
+<p>実行場所はすべて <strong>リポジトリのルート</strong>です。依存を未インストールの場合は <code>npm ci</code> を先に実行します。</p>
+<pre aria-label="sh"><code>npm run dev</code></pre>
+<ol><li>Editorの「新規Transition」を押し、Transition設定を開いて名前・長さ・切替時刻・coverを設定します。</li>
+<li>「Group追加」で10個の平行四辺形を作ります。Template、Generator、Modifierはベース編集のプロパティパネルにあります。</li>
+<li>子一覧を開いてitem-002を選択し、色や位置を変更します。個別設定中の項目は「共通へ戻す」で解除できます。</li>
+<li>Groupを選び、「キーフレーム編集」へ切り替え、タイムラインの編集階層をChildにします。</li>
+<li>対象を画面の中心Xにして、0 / 400 / 800msへシークしながら「現在時刻にキー追加」で3キーを作り、各キー行の表示値を編集します。Staggerを40msにします。</li>
+<li>item-002を選択してIndividual回転のキーを追加し、値・時刻・Easingを編集します。</li>
+<li>再生・一時停止・再開・停止、時刻スライダーを確認します。cover区間では全面が設定色になります。</li>
+<li>保存済みを確認してリロードします。Projectは復元されますが、選択・時刻などのUI状態は初期化されます。</li>
+<li>JSON出力 → JSON読込 → 検証内容確認 → 置換で同じデータを復元します。不正JSONは現在データを変えず拒否されます。</li>
+<li>Shape / Groupの複製・削除・順序変更、Transitionの複製・削除、Generatorの個数減増、Gridへの切り替えを確認します。</li></ol>
+<p>テスト・本番ビルド・本番ビルドのローカル表示は、同じく <strong>リポジトリのルート</strong>で実行します。</p>
+<pre aria-label="sh"><code>npm test
+npm run build
+npm run preview
+npm run docs:report</code></pre>
+<h3 id="phase-3-section-9">ビルド・テスト結果</h3>
+<ul><li><code>npm test</code>: <strong>67件成功、0件失敗</strong>。Node.js標準ランナーを継続。</li>
+<li><code>npm run build</code>: <strong>成功</strong>。Three.jsを含むJSは約962 kB（gzip約271 kB）。既存と同じ500 kB超のチャンク警告あり。</li>
+<li><code>git diff --check</code>: <strong>成功</strong>。</li>
+<li>HTMLレポート: Phase 0〜3の見出し・表・コード・完了項目、目次リンク、Phase 4〜6の未着手枠、390px表示、印刷を確認。外部通信・ページ例外は0件。</li>
+<li>Lintは設定がないため未実行。</li>
+<li>Chrome 158.0.8127.36のheadlessで実描画と操作を検証。テスト用Playwright等は一時ディレクトリのツールで、プロジェクトの依存に含めていません。</li></ul>
+<div class="table-scroll" tabindex="0" role="region" aria-label="ビルド・テスト結果"><table><thead><tr><th scope="col">ブラウザ確認</th><th scope="col">結果</th></tr></thead><tbody><tr><td>GUIで新規Transition・10個のGroup・赤青と幅Modifier・白いitem-002</td><td>成功</td></tr>
+<tr><td>GUIでChild移動3キー・Stagger 40ms・Individual回転・Easing</td><td>成功。保存JSONの値と件数を確認</td></tr>
+<tr><td>0 / 400 / 1200msのシーク</td><td>成功。描画画像が各時点で変わることを確認</td></tr>
+<tr><td>coverの色・時刻プレビュー</td><td>成功。600msで中心ピクセルが設定色#22AA66と一致</td></tr>
+<tr><td>再生・一時停止・再開・終端停止</td><td>成功。一時停止中は時刻不変、再開後に1200msで停止</td></tr>
+<tr><td>個数10→2→10、Grid変更、Shape編集・複製・削除・順序、Transition複製削除</td><td>成功。Override保持と全体IDの一意性を確認</td></tr>
+<tr><td>重複キー時刻</td><td>成功。操作を拒否して元のキー時刻・保存データを保持</td></tr>
+<tr><td>自動保存・リロード復元</td><td>成功。Projectの一致、選択・現在時刻が保存されないことを確認</td></tr>
+<tr><td>JSON出力・検証付き読込・確認後の適用</td><td>成功。出力・復元のProjectが一致。不正JSON時も既存データを保持</td></tr>
+<tr><td>破損した保存データでの起動と編集</td><td>成功。編集は可能、自動保存を保留し元の文字列を保持</td></tr>
+<tr><td>保存容量超過の模擬と再試行</td><td>成功。作業を保持し、制限解除後に最新の編集値を保存</td></tr>
+<tr><td>非一様scale・回転した親のもとで画面Xを編集</td><td>成功。X=700を再現してYを保持。回転・倍率の未対応編集は無効表示</td></tr>
+<tr><td>Editor破棄時のリソース</td><td>成功。EditorのRAF残留0、Renderer / GPUDevice解放を確認</td></tr>
+<tr><td>幅390px</td><td>成功。画面全体の横スクロールなし</td></tr>
+<tr><td>開発版のページ例外・console error</td><td>0件</td></tr>
+<tr><td>本番ビルドのWebGPU / WebGL2フォールバック</td><td>両方成功。編集・自動保存復元・再生・描画再起動、ページ例外0件</td></tr></tbody></table></div>
+<h3 id="phase-3-section-10">レビュー対応：UI全体の統一</h3>
+<p>確認日: 2026-11-19。Phase 3のEditorを中心に、Phase 0〜2のサンプル画面も含めて入力とレイアウトを整理しました。</p>
+<h4 id="phase-3-section-11">揃えた項目</h4>
+<ul><li>ページ上部のナビゲーションと本文の左端・最大幅を、表示中の画面に合わせて統一。</li>
+<li>通常のボタン、数値・HEX入力、選択欄、JSON読込を高さ36pxに統一。ラベル・単位・枠線・角丸・余白も共通化。</li>
+<li>通常操作、主操作、削除、無効状態の見分けを整理。再生と新規作成は主操作として強調。</li>
+<li>4領域のパネル見出しは高さ68pxに統一し、見出しと操作部分の境界・余白を揃える。</li>
+<li>レイヤーの追加と管理操作は2列にし、不規則なボタン折り返しを解消。</li>
+<li>Transition選択欄と操作ボタンの下端を揃え、基本設定と切替幕の設定を別のまとまりに配置。</li>
+<li>Templateは初期状態で折りたたみ、GeneratorとModifierは開いた状態に整理。折りたたみ状態はUIのみで、保存データには含めない。</li>
+<li>プロパティの入力欄と個別設定解除、無効項目の表示、Modifierの操作列を揃える。並べ替えできない先頭・末尾の矢印は無効表示。</li>
+<li>プレビュー領域そのものを16:9にし、数値入力・再生状態・幕の状態を一定の枠へ配置。幕のON/OFFで表示位置や高さが変わらないようにする。</li>
+<li>現在時刻は表示だけms単位の整数へ丸め、内部の再生時計・評価時刻の精度は保持。</li>
+<li>タイムラインの階層・対象選択と操作ボタンを整列し、0msと終端の目盛りを表示。キー編集表は横スクロール内に収め、長い制限メッセージもセル内で折り返す。</li>
+<li>幅に応じて3列・2列・1列へ配置変更。狭い画面でもプレビューを先に表示し、スライダーや操作ボタンの幅を確保。</li></ul>
+<h4 id="phase-3-section-12">変更ファイルと処理の境界</h4>
+<p><code>src/editor/editor.css</code> にEditorのスタイルを分離し、<code>src/style.css</code> は共通の寸法・色・入力・サンプル画面のレイアウトを整理しました。<code>src/App.vue</code> は現在の画面に合わせたナビゲーション幅を適用します。</p>
+<p><code>src/editor/EditorView.vue</code>、<code>src/editor/components/EditorField.vue</code>、<code>LayerPanel.vue</code>、<code>PropertyPanel.vue</code>、<code>ModifierPanel.vue</code>、<code>TimelinePanel.vue</code> は、見出し・本文・操作列・折りたたみの構造を整理しました。変更対象は表示と操作の配置で、Domainの評価・保存形式・GPUリソース管理には変更を加えていません。UIの入力 → 既存の編集検証 → 評価器 → Rendererという処理を継続しています。</p>
+<h4 id="phase-3-section-13">確認結果</h4>
+<p>実行場所は <strong>リポジトリのルート</strong>です。<code>npm test</code> は <strong>67件成功、0件失敗</strong>、<code>npm run build</code> は <strong>成功</strong>、<code>git diff --check</code> も成功しました。JSは約966 kB（gzip約272 kB）で、従来のチャンクサイズ警告は継続しています。今回の表示整理に対する新しいユニットテストは追加せず、実ブラウザで表示と既存操作を確認しています。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="確認結果"><table><thead><tr><th scope="col">確認項目</th><th scope="col">結果</th></tr></thead><tbody><tr><td>ナビゲーションと本文の左端、Transition選択と操作の位置</td><td>一致を実測</td></tr>
+<tr><td>通常ボタン・入力・選択・JSON読込の高さ</td><td>36pxで一致</td></tr>
+<tr><td>4領域の見出し</td><td>68pxで一致</td></tr>
+<tr><td>Templateのキーボード開閉</td><td>Enterで開閉し、入力欄の表示を確認</td></tr>
+<tr><td>549 / 600 / 651msでの幕の切り替え</td><td>プレビュー領域の位置・サイズは不変</td></tr>
+<tr><td>幅1600 / 1280 / 1024 / 768 / 390 / 320px</td><td>横はみ出しなし、Canvasは16:9を維持</td></tr>
+<tr><td>時刻スライダーの操作幅</td><td>幅320pxでも138pxを確保</td></tr>
+<tr><td>制作・3キー編集・Easing・Stagger・再生・停止・保存・JSON往復</td><td>既存シナリオがすべて成功</td></tr>
+<tr><td>Phase 0〜2のナビ位置と幅900 / 480 / 320pxの表示</td><td>正常</td></tr>
+<tr><td>本番ビルドのWebGPU / WebGL2</td><td>編集・保存復元・再生・プレビュー再起動が成功</td></tr>
+<tr><td>ページ例外・console error</td><td>0件</td></tr></tbody></table></div>
+<p>Chromeで検証しています。Safari / Firefoxと異なるOSのネイティブ入力部品は未検証です。</p>
+<h3 id="phase-3-section-14">完了条件とPhase 4への引き継ぎ</h3>
+<ul><li class="check-item"><span class="check" aria-label="完了">✓</span><span>4領域のEditorと数値編集。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>複数Transitionの管理。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>Shape / Group / Generator / Modifier / OverrideのGUI編集。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>複数キー、Easing、Stagger。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>再生・一時停止・停止・シーク。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>localStorage自動保存・復元。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>JSON入出力で同じProjectを復元。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>エラー時のデータ保護。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>テスト・ビルド・操作確認結果を報告。</span></li>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>Phase 4以降には進んでいない。</span></li></ul>
+<p>Phase 4は保存済みProjectと <code>evaluateTransition</code>、既存Rendererを利用できます。Editorのcoverは一時的な全画面Shapeとして描画しています。PresentationではswitchAtMsでの一度だけのDOM切り替え、多重遷移の防止、失敗時の移動継続を別途実装してください。</p>
+<p>Safari / Firefox、別GPU、実際のデバイスロスト、1000個でのフレームレートは未検証です。上記の画面値編集の制限を引き継いでください。Undo/Redo、直接ドラッグ、キーのドラッグ、Presentation、追加Generator、動画出力は未実装です。</p></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
       <section id="usage" class="usage" aria-labelledby="usage-title"><h2 id="usage-title">このレポートについて</h2>
         <p><code>docs/phases/phase-*-result.md</code> を原本として生成したHTML版です。本文はすべてこのファイルに含まれ、インターネット接続や開発サーバーなしで閲覧できます。Markdown原本・README・公式資料へのリンクは、移動先のファイルまたは通信が必要です。</p>
         <p>更新する場合はMarkdown原本を編集し、<strong>リポジトリのルート</strong>で <code>npm run docs:report</code> を実行してください。</p>
         <p>「印刷 / PDF保存」で全Phaseをまとめて印刷できます。ブラウザのページ内検索で、ファイル名・API名・検証項目を探せます。</p>
       </section>
-      <footer>Generative Slide System · Phase 0–2 · 実装記録のHTML版</footer>
+      <footer>Generative Slide System · Phase 0–3 · 実装記録のHTML版</footer>
     </main>
   </div>
   <script>document.getElementById('print-report').addEventListener('click', () => window.print())</script>

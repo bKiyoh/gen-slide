@@ -1,8 +1,17 @@
 <script setup>
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { createShapeRenderer } from '../renderer/three/createShapeRenderer.js'
+import { calculateShapeGeometry } from '../domain/shapeGeometry.js'
+import { transformMatrix } from '../domain/transition/transform.js'
 
-const props = defineProps({ shapes: { type: Array, required: true } })
+const props = defineProps({ shapes: { type: Array, required: true }, selectedIds: { type: Array, default: () => [] } })
+const outlines = computed(() => props.shapes.filter(shape => props.selectedIds.includes(shape.id) || props.selectedIds.includes(shape.groupId)).map(shape => {
+  const { positions } = calculateShapeGeometry(shape.geometry)
+  const [a, b, c, d, x, y] = shape.worldMatrix ?? transformMatrix(shape.transform)
+  const points = []
+  for (let index = 0; index < positions.length; index += 3) points.push(`${a * positions[index] + c * positions[index + 1] + x},${b * positions[index] + d * positions[index + 1] + y}`)
+  return { id: shape.id, points: points.join(' ') }
+}))
 const container = ref(null)
 const status = ref({ state: 'initializing', backend: '判定不能', message: '初期化待ちです。' })
 let renderer = null
@@ -32,6 +41,7 @@ onUnmounted(() => { void renderer?.dispose() })
     <span>{{ status.message }}</span>
   </div>
   <div ref="container" class="canvas-container" data-testid="canvas-container">
+    <svg v-if="outlines.length" class="selection-overlay" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><polygon v-for="outline in outlines" :key="outline.id" :points="outline.points" fill="none" stroke="#e8b85d" stroke-width="2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" /></svg>
     <p v-if="status.state === 'error'" class="canvas-message" role="alert">
       描画できませんでした。<br />
       {{ status.message }}<br />
