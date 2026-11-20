@@ -17,8 +17,7 @@ function add(key) {
 }
 </script>
 <template>
-  <details class="transition-settings design-library" open>
-    <summary>意匠ライブラリ <span>5パターン · 追加して自由に編集</span></summary>
+  <section class="design-library" aria-label="意匠ライブラリ">
     <div class="transition-settings-content">
       <div class="pattern-library-actions"><p class="control-note">動きの異なる5種類です。追加した意匠は、通常のレイヤー・色・キーで編集できます。</p><div class="editor-actions"><button type="button" @click="$emit('compare', createDesignDemoProject())">5パターンを発表で比較</button><button type="button" @click="add()">5種類をまとめて追加</button><a class="pattern-download" :href="examplesUrl" download="design-patterns.json">比較用JSONを保存</a></div></div>
       <div class="pattern-grid">
@@ -28,5 +27,5 @@ function add(key) {
         </article>
       </div>
     </div>
-  </details>
+  </section>
 </template>

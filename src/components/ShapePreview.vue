@@ -49,7 +49,7 @@ onUnmounted(() => { observer?.disconnect(); void renderer?.dispose() })
 <template>
   <div class="preview-status" role="status" aria-live="polite">
     <span class="backend" :data-state="status.state" data-testid="backend">{{ status.backend }}</span>
-    <span>{{ status.message }}</span>
+    <span :title="status.message">{{ status.message }}</span>
   </div>
   <div ref="container" class="canvas-container" data-testid="canvas-container">
     <div v-if="$slots.background" class="preview-background" :style="{ width: `${fit.width}px`, height: `${fit.height}px` }" aria-hidden="true" inert>

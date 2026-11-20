@@ -95,6 +95,23 @@
     .record-body .check-item { display:flex; align-items:baseline; gap:9px; list-style:none; margin-left:-20px; }
     .check { color:var(--green); font-weight:700; }
     .back-top { display:inline-block; margin-top:22px; font-size:11px; }
+    .ux-review-link { display:block; padding:14px 18px; margin:20px 0; border-left:3px solid var(--blue); background:#edf2fa; font-size:13px; }
+    #ui-ux-review { scroll-margin-top:24px; }
+    .ux-layout { margin:20px 0; }
+    .ux-layout > svg { display:block; width:100%; height:auto; }
+    .ux-layout figcaption { margin-top:8px; color:var(--muted); font-size:12px; }
+    .review-form { padding:20px; margin:20px 0; border:1px solid #bdcadb; border-radius:6px; background:#f0f3f7; }
+    .review-form fieldset { min-width:0; margin:16px 0; padding:12px 14px; border:1px solid #cbd0d5; border-radius:4px; }
+    .review-form legend { padding:0 6px; font-weight:600; }
+    .review-form fieldset label { display:flex; align-items:baseline; gap:8px; margin:8px 0; }
+    .review-form input[type='radio'] { flex-shrink:0; accent-color:var(--blue); }
+    .review-field { display:grid; gap:6px; margin:16px 0; }
+    .review-field select,.review-field textarea { min-width:0; width:100%; padding:8px 10px; border:1px solid #aab5c1; border-radius:4px; background:white; color:var(--ink); font:inherit; line-height:1.65; }
+    .review-field textarea { resize:vertical; }
+    .review-field textarea[readonly] { background:#fafcfe; }
+    .review-form input:focus-visible,.review-form select:focus-visible,.review-form textarea:focus-visible { outline:3px solid #8eb4ff; outline-offset:3px; }
+    .review-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+    .review-actions span { color:var(--muted); font-size:12px; }
     .usage { padding:22px 24px; background:#edf1f5; border-radius:6px; font-size:12px; }
     .usage h2 { margin:0 0 10px; font-size:15px; }
     .usage p { margin:7px 0; }
@@ -113,13 +130,13 @@
       <div class="brand-mark" aria-hidden="true"><span></span><span></span></div>
       <div class="brand">GENERATIVE<br />SLIDE SYSTEM</div>
       <p class="caption">Implementation &amp; validation<br />開発の積み上げを、一つの記録に。</p>
-      <nav aria-label="Phaseの目次"><a href="#overview"><span>↗</span> 全体概要</a><a href="#phase-0"><span>00</span> 描画基盤</a>
+      <nav aria-label="Phaseの目次"><a href="#overview"><span>↗</span> 全体概要</a><a href="#ui-ux-implementation"><span>↗</span> UI / UX改善結果</a><a href="#phase-0"><span>00</span> 描画基盤</a>
 <a href="#phase-1"><span>01</span> 規則から生成</a>
 <a href="#phase-2"><span>02</span> 時刻から評価</a>
 <a href="#phase-3"><span>03</span> 編集・再生・保存</a>
 <a href="#phase-4"><span>04</span> スライド間の演出</a>
 <a href="#phase-5"><span>05</span> 直接操作と取り消し</a><a href="#phase-6"><span>06</span> Phase 6 · 未着手</a><a href="#usage"><span>?</span> このレポートについて</a></nav>
-      <div class="sidebar-bottom">収録範囲 Phase 0–5<br />記録の最新確認日 2026-11-19<a href="../README.md">READMEを見る ↗</a></div>
+      <div class="sidebar-bottom">収録範囲 Phase 0–5<br />記録の最新確認日 2026-11-20<a href="../README.md">READMEを見る ↗</a></div>
     </aside>
     <main id="overview">
       <div class="topbar"><span>ENGINEERING REPORT / PHASE 0–5</span><button type="button" id="print-report">印刷 / PDF保存</button></div>
@@ -127,6 +144,7 @@
         <p class="lead">四角形を描く基盤から、規則に基づく生成、時刻からのアニメーション評価、編集・保存まで。各Phaseの実装内容・設計判断・検証結果・引き継ぎ事項をまとめています。</p>
         <div class="hero-metrics"><span><b>Phase 5</b> まで実装</span><span><b>98</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
       </header>
+      <a class="ux-review-link" href="#ui-ux-implementation">UI / UX改善の実装結果を見る → 小型プレビューとスクロールしない編集画面</a>
       <section aria-labelledby="progress-title"><div class="section-heading"><h2 id="progress-title">ここまでの実装</h2><span>各カードから全文へ移動できます</span></div><div class="phase-cards"><a class="phase-card" href="#phase-0">
   <span class="phase-label">PHASE 00</span><h3>描画基盤</h3>
   <p>VueとThree.jsをつなぎ、四角形を描画。入力・リサイズ・GPUの後始末を確認。</p>
@@ -158,7 +176,7 @@
 <tr><th scope="row">Phase 2</th><td>54件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
 <tr><th scope="row">Phase 3</th><td>67件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
 <tr><th scope="row">Phase 4</th><td>82件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
-<tr><th scope="row">Phase 5</th><td>98件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr></tbody></table>
+<tr><th scope="row">Phase 5</th><td>98件成功</td><td><span class="success">成功</span></td><td>2026-11-20</td></tr></tbody></table>
         <p>テスト数は各Phase時点の累計です。今回は原本のHTML化を行い、過去の検証を再実施したものではありません。未検証事項・警告は各Phase本文に記載しています。</p>
       </section>
       <section id="upcoming" class="upcoming" aria-labelledby="upcoming-title"><div class="section-heading"><h2 id="upcoming-title">今後のPhase</h2><span>本文は実装後に追記</span></div><div id="phase-6" class="planned-phase"><div><p class="phase-label">PHASE 06</p><h3>Generator / Modifier・表現力の拡張（任意）</h3></div><span class="planned-status">未着手</span></div></section>
@@ -873,9 +891,9 @@ npm run preview -- --host 127.0.0.1</code></pre>
   <header class="report-header"><div><p class="phase-label">PHASE 05 / IMPLEMENTATION RECORD</p>
   <h2 id="phase-5-title">直接操作と取り消し<span>実装・検証記録</span></h2></div>
   <a class="source-link" href="phases/phase-5-result.md">Markdown原本 ↗</a></header>
-  <div class="report-meta"><span>確認日 <time datetime="2026-11-19">2026-11-19</time></span><span>テスト <b>98件成功</b></span><span>ビルド <b>成功</b></span></div>
-  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li></ul></details>
-  <div class="record-body"><p>確認日: 2026-11-19。Phase 5で停止し、Phase 6には進んでいません。</p>
+  <div class="report-meta"><span>確認日 <time datetime="2026-11-20">2026-11-20</time></span><span>テスト <b>98件成功</b></span><span>ビルド <b>成功</b></span></div>
+  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li><li><a href="#phase-5-section-14">UI / UX 改善検討 — 2026-11-20・実装前の記録</a></li><li><a href="#phase-5-section-21">UI / UX改善の実装 — UI-UX-01・2026-11-20</a></li></ul></details>
+  <div class="record-body"><p>確認日: 2026-11-20（初回実装の確認は2026-11-19）。Phase 5で停止し、Phase 6には進んでいません。</p>
 <h3 id="phase-5-section-0">作業前のコミットと今回の範囲</h3>
 <p>承認済みのPhase 4、発表構成とEditorプレビューの連動、cover廃止、設計・仕様・実装記録を <code>5dd86f9</code>（feat: complete Phase 4 presentation and remove cover restrictions）にコミットしました。Phase 5の変更はレビュー用に未コミットで残しています。</p>
 <p>今回はプレビュー直接操作、キー時刻のドラッグ、Undo/Redoを追加しました。Generatorや描画方式の追加、Phase 6のRadial / Random / Path、自由頂点編集は実装していません。</p>
@@ -1013,15 +1031,273 @@ npm run preview -- --host 127.0.0.1</code></pre>
 <li class="check-item"><span class="check" aria-label="完了">✓</span><span>一つのドラッグをUndo/Redo一回にまとめる。</span></li>
 <li class="check-item"><span class="check" aria-label="完了">✓</span><span>保存・復元、既存Presentation再生とcover廃止を維持。</span></li>
 <li class="check-item"><span class="check" aria-label="完了">✓</span><span>自動テスト・ビルド・ブラウザ確認の結果を記録。</span></li>
-<li class="check-item"><span class="check" aria-label="完了">✓</span><span>Phase 6へ進まず停止。</span></li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
+<li class="check-item"><span class="check" aria-label="完了">✓</span><span>Phase 6へ進まず停止。</span></li></ul>
+<div id="ui-ux-review"></div>
+<h3 id="phase-5-section-14">UI / UX 改善検討 — 2026-11-20・実装前の記録</h3>
+<p>この節は実装前の検討記録です。回答受領後の変更と検証は、後述の「UI / UX改善の実装」に記載しています。</p>
+<p>ユーザーから「何をどう操作するのかわかりにくい」「できればスクロールなし」「プレビューは4分の1のサイズでよい」という意見を受けた検討記録です。今回作成したのは現状の調査、配置案、回答フォームです。アプリ本体・合意済みの設計・仕様は変更していません。Phase 6の実装にも進んでいません。</p>
+<h4 id="phase-5-section-15">実画面で確認した問題</h4>
+<p>新しいブラウザコンテキストで初期状態のEditorを開き、Chromeのヘッドレス実行で測定しました。単位はCSS px、Yはページ先頭からの位置です。保存済みProjectや開閉状態が違う場合は数値も変わります。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="実画面で確認した問題"><table><thead><tr><th scope="col">測定対象</th><th scope="col">1440 × 900</th><th scope="col">1366 × 768</th><th scope="col">操作への影響</th></tr></thead><tbody><tr><td>ページ全体の高さ</td><td>1961</td><td>1911</td><td>通常の操作に縦スクロールが必要</td></tr>
+<tr><td>初期表示で開いている意匠ライブラリ</td><td>Y 254・高さ428</td><td>Y 254・高さ419</td><td>サンプル一覧が作業領域より先に大きく表示される</td></tr>
+<tr><td>4領域の編集パネルの開始</td><td>Y 844</td><td>Y 835</td><td>レイヤー・プロパティを最初に見渡せない</td></tr>
+<tr><td>描画Canvasの開始</td><td>Y 1053</td><td>Y 1044</td><td>プレビューの図形は最初の画面内に入らない</td></tr>
+<tr><td>再生ボタン領域の開始</td><td>Y 1528</td><td>Y 1478</td><td>値を変えて再生するたびに視点が移動する</td></tr>
+<tr><td>タイムラインの開始</td><td>Y 1719</td><td>Y 1669</td><td>見た目の編集と時間の編集を往復しにくい</td></tr></tbody></table></div>
+<p>コードでも次の構造を確認しました。</p>
+<ul><li><code>EditorView.vue</code>：ヘッダー、演出の選択、ライブラリ、演出設定、発表構成の後に編集領域を表示。ライブラリ追加後にプレビューへスクロールする処理もある。</li>
+<li><code>editor.css</code>：タイムラインはプレビュー列の下に配置。画面全体の高さを制限せず、プレビューの説明・GPU状態・再生・シーク・履歴説明が縦に重なる。幅1120px以下ではプロパティも下段へ移る。</li>
+<li><code>PropertyPanel.vue</code>：図形の基本値、Template、Generator、Modifierを同じ縦の領域で編集。ベース／キーフレームの切替は右、実際のキー編集は下のタイムラインに分かれる。</li>
+<li><code>App.vue</code>、<code>LayerPanel.vue</code>：Phase番号、Shape / Group、内部IDが前面に出る。「どの図形の何を編集するか」より開発上の分類を先に理解する必要がある。</li></ul>
+<h4 id="phase-5-section-16">配置案 — 小さいプレビューと常時見えるタイムライン</h4>
+<p><strong>左で対象を選び、中央で編集し、右上で確認し、下で時間を調整する配置</strong>を提案します。レイヤー・プレビュー・プロパティ・タイムラインの4領域は維持し、位置と面積の配分を変えます。基本設計6章の大きな中央プレビューを置く図からの変更案なので、合意後に設計図も更新する想定です。</p>
+<p>以下は1440 × 900の画面を想定した配置図です。図内の図形・数値は説明用であり、動作するEditorではありません。</p>
+<figure class="ux-layout">
+  <svg viewBox="0 0 1440 900" role="img" aria-labelledby="ux-layout-title ux-layout-description">
+    <title id="ux-layout-title">編集を中央、384 × 216のプレビューを右上、タイムラインを下に固定する配置案</title>
+    <desc id="ux-layout-description">上部に演出の選択と共通操作、左に216px幅のレイヤー、中央に776px幅の編集欄、右に384px幅のプレビュー。下部のタイムラインと再生操作が同じ画面内に収まる案。</desc>
+    <rect width="1440" height="900" rx="12" fill="#171d27" />
+    <g fill="#edf2fa" font-family="sans-serif" font-size="16">
+      <rect x="0" y="0" width="1440" height="56" fill="#222b38" />
+      <text x="20" y="35" font-size="20" font-weight="600">演出エディター</text>
+      <text x="224" y="35" fill="#c0cdde">ファイル ▾</text>
+      <text x="962" y="35" fill="#b6dbc7">自動保存済み</text>
+      <text x="1100" y="35">↶ 戻す　↷ やり直す</text>
+      <rect x="1298" y="12" width="126" height="32" rx="5" fill="#b4d1ff" />
+      <text x="1322" y="34" fill="#13253d">発表する</text>
+      <text x="20" y="90" fill="#c0cdde">編集中の演出</text>
+      <rect x="140" y="65" width="290" height="34" rx="5" fill="#2b3a50" />
+      <text x="152" y="88">斜線スイープ　▾</text>
+      <text x="454" y="89">＋ 演出</text>
+      <text x="568" y="89">素材から追加</text>
+      <text x="744" y="89">スライドに割当</text>
+      <text x="1300" y="89">その他 ⋯</text>
+      <rect x="16" y="116" width="216" height="512" rx="6" fill="#222b38" />
+      <text x="32" y="146" font-weight="600">① 対象を選ぶ</text>
+      <text x="32" y="184" fill="#c0cdde">＋ 図形　＋ 図形のまとまり</text>
+      <rect x="26" y="205" width="196" height="40" rx="4" fill="#355276" />
+      <text x="36" y="231">▾ 帯のグループ 1</text>
+      <text x="54" y="276">図形 1</text><text x="54" y="314">図形 2</text><text x="54" y="352">図形 3</text>
+      <text x="34" y="402">▰ 四角形 1</text>
+      <text x="32" y="598" fill="#c0cdde">複製　削除　奥へ　手前へ</text>
+      <rect x="248" y="116" width="776" height="512" rx="6" fill="#222b38" />
+      <text x="266" y="146" font-weight="600">② 選んだ対象を編集</text>
+      <text x="266" y="182" fill="#c0cdde">対象：帯のグループ 1 ／ グループ全体</text>
+      <rect x="266" y="198" width="164" height="36" rx="4" fill="#b4d1ff" />
+      <text x="288" y="222" fill="#13253d">見た目を編集</text>
+      <text x="458" y="222">動きを編集</text>
+      <text x="266" y="276">全体の位置・回転</text>
+      <text x="484" y="276" fill="#c0cdde">共通の形</text>
+      <text x="674" y="276" fill="#c0cdde">配置・個数</text>
+      <text x="854" y="276" fill="#c0cdde">変化の規則</text>
+      <path d="M266 290 H1004" stroke="#46566c" />
+      <text x="266" y="328" fill="#c0cdde">画面の中心 X</text><text x="650" y="328" fill="#c0cdde">画面の中心 Y</text>
+      <rect x="266" y="340" width="340" height="40" rx="4" fill="#17202d" /><text x="280" y="366">960　px</text>
+      <rect x="650" y="340" width="354" height="40" rx="4" fill="#17202d" /><text x="664" y="366">540　px</text>
+      <text x="266" y="420" fill="#c0cdde">回転</text><text x="650" y="420" fill="#c0cdde">倍率 X / Y</text>
+      <rect x="266" y="432" width="340" height="40" rx="4" fill="#17202d" /><text x="280" y="458">0　°</text>
+      <rect x="650" y="432" width="354" height="40" rx="4" fill="#17202d" /><text x="664" y="458">1.00　/　1.00</text>
+      <text x="266" y="518" fill="#c0cdde">現在の画面表示値で編集。変更は右のプレビューへ反映。</text>
+      <text x="266" y="594" fill="#c0cdde">必要な項目をタブで切り替える</text>
+      <rect x="1040" y="116" width="384" height="36" rx="5" fill="#222b38" />
+      <text x="1054" y="141" font-weight="600">③ プレビュー</text><text x="1264" y="141" fill="#c0cdde">個別 ／ 全体</text>
+      <svg x="1040" y="152" width="384" height="216" viewBox="0 0 1920 1080" aria-hidden="true">
+        <rect width="1920" height="1080" fill="#f5f3ee" />
+        <path d="M-130 0 H110 L570 1080 H330 Z M570 0 H810 L1270 1080 H1030 Z M1270 0 H1510 L1970 1080 H1730 Z" fill="#ef5845" />
+        <path d="M220 0 H460 L920 1080 H680 Z M920 0 H1160 L1620 1080 H1380 Z M1620 0 H1860 L2320 1080 H2080 Z" fill="#2a57d4" />
+      </svg>
+      <rect x="1040" y="368" width="384" height="52" rx="5" fill="#222b38" />
+      <text x="1054" y="400">▶ 再生　Ⅱ 一時停止　■ 先頭へ</text>
+      <text x="1054" y="446" fill="#c0cdde">384 × 216 · 16:9 · GPU状態を表示</text>
+      <rect x="1040" y="466" width="384" height="162" rx="6" fill="#222b38" />
+      <text x="1054" y="497" font-weight="600">演出設定</text>
+      <text x="1054" y="538" fill="#c0cdde">長さ</text><text x="1230" y="538">1280 ms</text>
+      <text x="1054" y="577" fill="#c0cdde">スライド切替</text><text x="1230" y="577">640 ms</text>
+      <text x="1054" y="609" fill="#c0cdde">名前・詳細設定を開く ▾</text>
+      <rect x="16" y="644" width="1408" height="212" rx="6" fill="#222b38" />
+      <text x="32" y="675" font-weight="600">④ 動くタイミングを調整</text>
+      <text x="1010" y="675">640 / 1280 ms　　＋ キー追加</text>
+      <text x="32" y="714" fill="#c0cdde">グループ全体 ▾</text>
+      <text x="250" y="714" fill="#c0cdde">0 ms</text><text x="790" y="714" fill="#c0cdde">640 ms</text><text x="1324" y="714" fill="#c0cdde">1280 ms</text>
+      <text x="32" y="759">位置 X / Y</text><text x="32" y="805">回転</text>
+      <path d="M270 754 H1376 M270 800 H1376" stroke="#596a80" />
+      <path d="M810 722 V840" stroke="#b4d1ff" stroke-width="2" />
+      <text x="270" y="759" fill="#e8b85d">◆</text><text x="804" y="759" fill="#e8b85d">◆</text><text x="1362" y="759" fill="#e8b85d">◆</text>
+      <text x="270" y="805" fill="#e8b85d">◆</text><text x="1362" y="805" fill="#e8b85d">◆</text>
+      <text x="20" y="885" fill="#c0cdde">選択：帯のグループ 1　／　見た目を編集中</text>
+      <text x="1030" y="885" fill="#c0cdde">操作説明・GPU詳細は必要なときに開く</text>
+    </g>
+  </svg>
+  <figcaption>配置の検討図。レポート上では縮小表示しています。製品の新しい画面は未実装です。</figcaption>
+</figure>
+<h4 id="phase-5-section-17">プレビューの「4分の1」とスクロールの扱い</h4>
+<p>実測した1440 × 900のCanvasは約766 × 431で、Canvasだけですでに画面面積の約25.5%です。一方、見出し・説明・状態・操作まで含むプレビューパネルは約768 × 859あります。縮小と同時に、その周辺の縦積みを整理する必要があります。</p>
+<p>上の図は<strong>現在のCanvasの幅と高さをそれぞれ約半分にし、面積を約1/4（384 × 216）にする</strong>案です。1920 × 1080の論理座標と16:9は維持します。「4分の1」が画面面積の意味なら、この案より大きい表示に調整します。プレビューを小さくすると細かい図形の選択は難しくなるので、レイヤー選択と数値入力を主導線にし、必要時だけ拡大して元の配置へ戻れる操作を候補にします。</p>
+<p>スクロールについては、<strong>通常の選択・数値変更・再生・シーク・キー編集でページをスクロールしない</strong>ことを第一目標にします。多数のレイヤー、Modifier、キーがある場合は、一覧の中だけスクロールする案が現実的です。完全にスクロールをなくしたい場合は、一覧もページ切替にする必要があり、項目を一覧しにくくなるため選択を分けています。</p>
+<details><summary>検討時の回答フォーム（回答受領済み）</summary>
+<form class="review-form" data-review-form data-review-id="UI-UX-01" data-review-title="編集画面の配置とプレビューサイズ" aria-label="UIとUXの改善案への回答">
+  <p><strong>UI-UX-01：この配置をどう調整したいですか？</strong><br />AGENTS.mdの「決定済みの設計を独断で変更しない」と回答フォームの指定に従い、設計への反映前に希望を確認します。初期選択は提案であり、回答・承認として扱いません。</p>
+  <fieldset><legend>プレビューの大きさ</legend>
+    <label><input type="radio" name="preview-size" value="現状のCanvas面積の約1/4（幅・高さを約半分）。配置図の案" checked /> 現状のCanvas面積の約1/4（図の案・推奨）</label>
+    <label><input type="radio" name="preview-size" value="画面全体の面積の約1/4" /> 画面全体の面積の約1/4</label>
+    <label><input type="radio" name="preview-size" value="別のサイズを補足欄で指定" /> 別のサイズを補足欄で指定</label>
+  </fieldset>
+  <fieldset><legend>スクロールをなくす範囲</legend>
+    <label><input type="radio" name="scroll-policy" value="ページのスクロールなし。項目が多い一覧の中のみ許容" checked /> ページのスクロールなし。多い一覧の中だけ許容（推奨）</label>
+    <label><input type="radio" name="scroll-policy" value="一覧の中もスクロールなし。ページ切替を使う" /> 一覧の中もスクロールなし。ページ切替を使う</label>
+  </fieldset>
+  <label class="review-field">普段のブラウザ表示領域（わかる範囲で）<select name="viewport"><option value="未指定。ひとまず1366×768を基準に検討">未指定・1366 × 768を仮の基準にする</option><option>1366 × 768</option><option>1440 × 900</option><option>1920 × 1080</option><option>別サイズを補足欄で指定</option></select></label>
+  <label class="review-field">補足・図で変えたい点<textarea name="notes" rows="3" placeholder="例：プレビューは右ではなく左に置きたい／普段のウィンドウは1280×720"></textarea></label>
+  <label class="review-field">このチャットに貼り付ける回答<textarea data-review-output readonly rows="8" aria-label="コピー用の回答テキスト"></textarea></label>
+  <div class="review-actions"><button type="button" data-copy-review>回答をコピー</button><span data-copy-status role="status" aria-live="polite">外部への送信はありません。</span></div>
+  <noscript>回答テキストの自動作成にはJavaScriptが必要です。質問ID「UI-UX-01」と希望をこのチャットへ直接記入することもできます。</noscript>
+</form>
+</details>
+<h4 id="phase-5-section-18">操作導線の整理</h4>
+<div class="table-scroll" tabindex="0" role="region" aria-label="操作導線の整理"><table><thead><tr><th scope="col">目的</th><th scope="col">提案する入口と動作</th><th scope="col">既存機能との対応</th></tr></thead><tbody><tr><td>作り始める</td><td>上部の「＋ 演出」「素材から追加」</td><td>新規Transition、意匠ライブラリ。ライブラリはボタンから開き、追加後は編集へ戻る</td></tr>
+<tr><td>編集対象を選ぶ</td><td>左のレイヤーで「帯のグループ 1 → 図形 2」</td><td>内部IDは補助表示へ移す。表示名は種類・順番から作り、保存形式への新規項目追加は前提にしない</td></tr>
+<tr><td>見た目を変える</td><td>中央で「見た目を編集」、必要な項目だけタブ表示</td><td>ベース編集。「全体の位置・回転」「共通の形」「配置・個数」「変化の規則」へ整理。共通の形と画面の値の違いは維持</td></tr>
+<tr><td>動きを変える</td><td>同じ場所で「動きを編集」→ 下でキーを選択・追加</td><td>キーフレーム編集。対象の階層と選択キーを中央・タイムラインで同期し、キーの値・時刻・補間は中央へ表示する案</td></tr>
+<tr><td>動きを確かめる</td><td>右上で再生、下の再生ヘッドでシーク</td><td>常に表示。現在時刻を示す操作はタイムラインへ集約。停止して先頭へ戻る操作とGPU描画の停止は別の名前にする</td></tr>
+<tr><td>発表へつなぐ</td><td>上部の「スライドに割当」→「発表する」</td><td>発表構成は専用の表示へ切替。戻ると編集対象・時刻・モードを維持する案</td></tr></tbody></table></div>
+<p>「全体の位置・回転」はGroup全体、「共通の形」「配置・個数」「変化の規則」はGroupを選んだときに表示する案です。子図形を選んだ場合は、その図形の見た目と個別設定の解除に絞ります。Group / Child / Individualの保存先・優先順位や、明示操作なしでキーを追加しないルールは維持します。</p>
+<p>ファイルの読込・出力は「ファイル」、複製・削除は対象の「その他」、Phase別検証画面は「開発用サンプル」から開く案です。自動保存状態、失敗時の復旧、WebGL 2へのフォールバック表示は確認できる場所を確保します。説明文・履歴件数・GPU詳細は必要時に開き、エラーや入力できない理由は該当操作の近くへ表示します。</p>
+<h4 id="phase-5-section-19">実装する場合の範囲と確認基準</h4>
+<p>これはPhase 5までのEditorの改善案です。新しい生成方式・描画方式・保存形式を追加する計画ではありません。配置の変更に合意した後、基本設計6章の図、F-06の操作説明、Phase 5のUI確認項目へ反映する想定です。</p>
+<ol><li>最初に管理操作とライブラリの表示位置を整理し、画面の高さに収まる編集領域を作る。</li>
+<li>レイヤー・小型プレビュー・編集欄・タイムラインを配置し、見た目／動きの切替と対象表示を統一する。</li>
+<li>ライブラリ、発表構成、読込確認などを開閉しても、編集中のProject・選択・再生位置・Undo履歴を保つ。</li>
+<li>ブラウザ表示領域1366 × 768を仮の最小基準にし、1440 × 900、1920 × 1080でも通常操作をページの縦横スクロールなしで完了できるか確認する。これは未検証の目標値。ブラウザのツールバーを除いた表示領域で判定する。</li>
+<li>多数のレイヤー・Modifier・キー、Group全体と子、ベースとキー、再生中と停止中、保存失敗・読込確認の状態も確認する。小さい画面や文字拡大時は読みやすさと操作の到達性を優先し、タブ切替などの代替配置を検討する。</li></ol>
+<p>GPU側の処理は、これまでどおり「Projectと時刻から図形を計算 → 描画状態を更新 → Canvasへ描画」です。表示を小さくしても論理座標は縮めず、画面サイズへの当てはめとポインター座標の逆変換を使います。実装時はCanvasリサイズ中の操作取消・選択枠・ハンドル・GPUリソースの後始末も回帰確認が必要です。</p>
+<h4 id="phase-5-section-20">今回の変更ファイルと検証</h4>
+<ul><li><code>docs/phases/phase-5-result.md</code>：調査結果・未実装の配置案・質問・確認基準を追記した原本。</li>
+<li><code>scripts/build-implementation-report.mjs</code>：原本内の明示したHTMLブロックを同じ位置へ出力。図とフォームを原本で管理するための変更。</li>
+<li><code>scripts/implementation-report.template.html</code>：配置図・フォームの表示、回答テキストの作成、コピーと手動コピーへの対応。</li>
+<li><code>docs/implementation-report.html</code>：リポジトリのルートで <code>npm run docs:report</code> を実行して再生成する閲覧用HTML。</li></ul>
+<p>現状のアプリの画面位置は実ブラウザで測定済みです。提案した製品レイアウトの画面内収まり・操作性・GPU挙動は未実装のため未検証です。冒頭の98件成功とビルド成功はPhase 5実装時の過去の結果です。</p>
+<p>今回、次の確認を実施しました。</p>
+<ul><li><code>npm run docs:report</code>：成功。6 Phaseの記録とPhase 6の「未着手」枠を維持してHTMLを生成。</li>
+<li><code>node --check scripts/build-implementation-report.mjs</code>：成功。</li>
+<li>ChromeでローカルHTMLを直接開く検証：配置図の表示、回答の初期値、選択・表示領域・自由記述の反映を確認。</li>
+<li>コピー機能：Clipboard API成功時の処理と、APIがない場合に回答欄を選択して手動コピーする処理をそれぞれ確認。成功時の分岐はAPIを差し替えて検証しており、OSのクリップボードへの実書込は未検証。</li>
+<li>フォームの送信抑止、幅320・390・768・1366・1440pxでレポート全体の横はみ出しなし、ページ例外0件、HTTP通信0件を確認。</li>
+<li>既存レポートの回帰確認：全6 Phaseの見出し・表・コード・チェック項目の保持、アンカーとIDの一意性、390px表示、印刷ボタン、全PhaseのPDF生成を確認。</li>
+<li>アプリのユニットテスト・製品ビルド：今回は未実行。アプリ本体のコード変更がなく、検証対象を文書生成とフォームに限定したため。提案レイアウトの機能確認とは区別する。</li></ul>
+<p>再生成と構文確認の実行場所は<strong>リポジトリのルート</strong>です。</p>
+<pre aria-label="sh"><code>npm run docs:report
+node --check scripts/build-implementation-report.mjs</code></pre>
+<p>ブラウザ確認は <code>/private/tmp/gen-slide-phase1-tools</code> の既存Playwright環境と一時検証スクリプトを使いました。プロジェクトへの依存追加はありません。HTMLを直接開き「UI / UX改善案」へ移動し、選択・補足を変更して「回答をコピー」を押すことで手動確認もできます。</p>
+<div id="ui-ux-implementation"></div>
+<h3 id="phase-5-section-21">UI / UX改善の実装 — UI-UX-01・2026-11-20</h3>
+<h4 id="phase-5-section-22">受領した回答と反映範囲</h4>
+<p>質問ID <code>UI-UX-01</code> に対し、ユーザーから「現状Canvasの面積約1/4（幅・高さ約半分）」「ページのスクロールなし、項目が多い一覧内のみ許容」「ひとまず1366×768を基準」「補足なし」と回答を受け、配置図の方向で実装しました。Phase 5までのEditorのUI改善として扱い、Phase 6へは進んでいません。</p>
+<p>左で対象を選択、中央で値やキーを編集、右上で動きを確認、下で時刻を調整する配置です。管理操作とライブラリを編集領域の上から移し、通常操作の4領域を画面内へ収めました。</p>
+<figure class="ux-layout"><a href="ui-ux-editor.png"><img src="ui-ux-editor.png" alt="1366×768の本番版Editor。左のレイヤー、中央の編集欄、右上の小型プレビュー、下のタイムラインを同時に表示。" style="display:block;width:100%;height:auto" /></a><figcaption>本番ビルドの実画面。画像をクリックすると原寸で開きます。プレビューは論理座標1920×1080を維持した縮小表示です。</figcaption></figure>
+<h4 id="phase-5-section-23">実装した機能と操作導線</h4>
+<ul><li>上部には演出選択、新規作成、素材追加、スライド割当、演出設定を配置。ファイル操作と使い方はヘッダーから開きます。</li>
+<li>中央の「見た目を編集／動きを編集」で基本値とキー編集を切り替えます。Groupでは「全体の位置・回転／共通の形／配置・個数／変化の規則」、単体・子では「位置・回転／形・色」に分けました。</li>
+<li>キーの追加、時刻・値・補間の入力は中央へ移し、選択した対象と動きの階層を表示します。下部にはトラックとシークを常時表示。キーやトラックをクリックすると、中央の動き編集へ進めます。</li>
+<li>プレビューを約1/4面積へ縮小。レイヤーの選択名を種類と順番へ変更し、内部IDは補助情報にしました。小さい図形は左のレイヤーと数値入力でも編集できます。</li>
+<li>「拡大／縮小」でプレビュー列の幅を切替。拡大時も再生操作を画面内に保ち、同じ描画コンポーネントを使います。</li>
+<li>ライブラリ・発表構成・ファイル・設定・ガイドは、必要時にダイアログを開きます。閉じるボタンとEscで戻れ、通常の開閉はProject・選択・時刻・履歴を保持します。開く際は再生を一時停止します。</li>
+<li>JSONの確認待ちはダイアログを閉じても保持し、下部から確認へ戻れます。読込の検証、置き換え前の確認、保存失敗時の保護・再試行は従来の処理を使用します。</li>
+<li>GPUバックエンドは小型プレビューの上に表示。再生停止とGPU描画停止を区別し、後者は「使い方」から操作します。Phase別検証画面も同じガイド内の選択欄へ移しました。</li>
+<li>1366×768、1440×900、1920×1080でページスクロールなしを確認。多数のレイヤー・プロパティ・キーやダイアログ内の長い一覧は領域内でスクロールします。</li></ul>
+<h4 id="phase-5-section-24">主な設計判断と処理フロー</h4>
+<p>基準はブラウザの表示領域です。通常のデスクトップではEditorを <code>100dvh</code> の高さにし、ヘッダー・管理操作・状態欄を除いた領域をGridで配分します。下部のタイムラインを184pxで確保し、上段の各一覧にスクロールを持たせることで、ページ全体が伸びるのを防ぎます。</p>
+<p>1366×768でCanvasは約345×194、1440×900では約382×215です。従来の約692×389、766×431と比べ、Canvas面積はそれぞれ約1/4です。16:9と1920×1080の論理座標は維持し、ウィンドウのサイズに応じて縮小率だけを変えます。</p>
+<p>中央のキー編集にはVue 3.5の <code>Teleport defer</code> を利用しました。同じTimelinePanelがトラック選択・キードラッグ・キー入力を管理し、入力欄だけ中央へ表示します。インストール済みVue 3.5.45のランタイムで <code>defer</code> の実装を確認し、ブラウザで初期表示・更新・画面離脱まで検証しました。初期化順によるターゲット未検出はこの指定で解消しています。</p>
+<p>GPUの処理は「Projectと時刻から図形を評価 → 描画状態を更新 → Canvasへ描画」のままです。Canvasの物理的な表示サイズだけが小さくなり、既存の座標変換を使ってポインター位置を論理座標へ戻します。拡大・縮小でもRendererを増やさず、リサイズ時の操作取消とアンマウント時のGPU解放を既存処理へ任せています。</p>
+<p>Domain、Evaluator、保存形式、Three.js APIへの変更はありません。依存パッケージの追加もありません。</p>
+<h4 id="phase-5-section-25">追加・変更したファイル</h4>
+<div class="table-scroll" tabindex="0" role="region" aria-label="追加・変更したファイル"><table><thead><tr><th scope="col">ファイル</th><th scope="col">変更内容</th></tr></thead><tbody><tr><td><code>src/editor/EditorView.vue</code></td><td>画面構成、ダイアログ、プレビュー縮小・拡大、管理操作とガイド</td></tr>
+<tr><td><code>src/editor/editor.css</code></td><td>画面の高さに収まる配置、各一覧のスクロール、小画面と低いウィンドウ向け配置</td></tr>
+<tr><td><code>src/editor/components/PropertyPanel.vue</code></td><td>中央のモード切替、項目のタブ、キー編集欄の表示先</td></tr>
+<tr><td><code>src/editor/components/TimelinePanel.vue</code></td><td>下部のシークとトラック、中央へのキー入力欄の表示</td></tr>
+<tr><td><code>src/editor/components/LayerPanel.vue</code></td><td>種類と順番による対象名、図形・グループの日本語表記</td></tr>
+<tr><td><code>src/editor/components/DesignLibrary.vue</code>, <code>SlideAssignmentPanel.vue</code></td><td>ダイアログから開く構造へ変更</td></tr>
+<tr><td><code>src/App.vue</code></td><td>初期画面のPhase別ナビゲーションをガイド内へ移動</td></tr>
+<tr><td><code>src/components/ShapePreview.vue</code></td><td>省略表示したGPU状態メッセージの全文をタイトルに保持</td></tr>
+<tr><td><code>docs/DESIGN.md</code>, <code>docs/SPECIFICATION.md</code>, <code>docs/phases/phase-5.md</code>, <code>README.md</code></td><td>受領した回答と新しい配置・操作入口を反映</td></tr>
+<tr><td><code>docs/phases/phase-5-result.md</code>, <code>docs/implementation-report.html</code></td><td>今回の原本と再生成したHTML。検討時のフォームは回答受領済みとして保存</td></tr>
+<tr><td><code>docs/ui-ux-editor.png</code>, <code>scripts/implementation-report.template.html</code></td><td>実画面の画像、改善結果へのリンク</td></tr></tbody></table></div>
+<h4 id="phase-5-section-26">動作確認の手順とコマンド</h4>
+<p>実行場所はすべて<strong>リポジトリのルート</strong>です。</p>
+<pre aria-label="sh"><code>npm test
+npm run build
+npm run dev -- --host 127.0.0.1</code></pre>
+<ol><li>表示領域1366×768でEditorを開き、レイヤー・編集欄・再生・タイムラインが同時に見えることを確認します。</li>
+<li>左で図形またはグループを選び、「見た目を編集」の項目を切替。ドラッグ、回転、拡縮と「元に戻す／やり直す」を確認します。</li>
+<li>「動きを編集」で階層と項目を選び、現在時刻にキーを明示的に追加します。下のキーを選び、中央で時刻・値・補間を変更します。</li>
+<li>素材・設定・ファイル・割当・ガイドを開いて閉じ、選択・時刻・履歴が維持されることを確認します。</li>
+<li>JSONの読込前の確認、適用後の保存と再読込、素材追加、スライド割当、「発表する」での演出再生を確認します。</li>
+<li>多い一覧を領域内でスクロールし、ページ全体の位置やプレビューの座標がずれないことを確認します。</li></ol>
+<p>本番版は、同じリポジトリのルートで次を実行して確認できます。</p>
+<pre aria-label="sh"><code>npm run preview -- --host 127.0.0.1
+npm run docs:report</code></pre>
+<p>HTMLレポートを直接開く場合は、Finderで <code>docs/implementation-report.html</code> をダブルクリックし、上部の「UI / UX改善の実装結果を見る」から移動します。</p>
+<h4 id="phase-5-section-27">検証結果・制約</h4>
+<ul><li><code>npm test</code>：<strong>98件成功</strong>。既存のDomain・Evaluator・直接操作・履歴・保存・Presentationの検証を再実行。</li>
+<li><code>npm run build</code>：<strong>成功</strong>。67 modules、JS約1016 kB、gzip約289 kB。従来からの500 kB超のチャンク警告は残っています。</li>
+<li>開発版Chrome、DPR 2、WebGPU / WebGL2：1366×768・1440×900・1920×1080でページの縦横スクロールなし。1366×768では再生・基本値編集・タイムラインが画面内に入り、通常の位置・回転・倍率と右のプレビューは内部スクロールも不要。</li>
+<li>開発版の編集回帰：移動・回転・拡縮、Undo/Redo、個別キーの値と時刻・補間、キーの隣接衝突防止、親変換下の子の移動、Generator変更後のOverride保持、Child共通キーを確認。</li>
+<li>ライブラリ・設定・ファイル・割当・ガイドの通常開閉：Project、選択対象、再生位置、履歴の保持を確認。</li>
+<li>40個の生成図形とレイヤー一覧内スクロール、拡大・縮小時の表示、幅768・390・320pxでの横はみ出しなしと操作への到達性、スライド背景付きプレビューを確認。</li>
+<li>JSONの不正データ拒否、検証後の適用、履歴リセット、素材追加して再生、保存後の再読込、既存Presentationのスライド切替とEditorへの復帰を確認。</li>
+<li>本番版Chrome、WebGPU / WebGL2：1366×768での配置、中央のキー編集欄、ダイアログ開閉後の時刻保持、Presentationの再生とEditorへの復帰を確認。実画面のCanvasは345×194.0625 CSS px。</li>
+<li>ブラウザ確認中の未処理ページ例外とVue警告は0件。ブラウザ確認は一時ディレクトリの既存Playwrightを使い、プロジェクト依存には追加していません。</li>
+<li><code>npm run docs:report</code>、生成スクリプトの構文確認、<code>git diff --check</code>：成功。HTMLを直接開き、画像の読込、過去6 Phaseの見出し・表・コード・チェック項目、アンカーの一意性、小画面表示、印刷ボタンとPDF生成を確認。検討時の回答フォームも、回答変更・コピー成功時の処理・Clipboard APIがない場合の手動コピーを確認。ページ例外・HTTP通信とも0件。</li></ul>
+<ul><li>幅1100px以下、または高さ680px未満では読みやすさと到達性を優先し、縦配置とページスクロールに切り替えます。基準サイズ以上でブラウザの文字を大きくした場合も、実効表示領域が小さくなることがあります。</li>
+<li>共通の形や多数の規則・キーなど、項目が多い編集欄では内部スクロールが残ります。通常の位置・回転・倍率は1366×768で一覧の内部スクロールなしに収まります。</li>
+<li>小型プレビューで細かい図形やハンドルが密集するときは、拡大またはレイヤー選択・数値入力を使います。ズーム・パンや新しい変形方法は追加していません。</li>
+<li>Safari・Firefox、実機のタッチ・ペン、ブラウザの大きな文字拡大は未検証です。</li>
+<li>Phase 6へは進んでいません。</li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
       <section id="usage" class="usage" aria-labelledby="usage-title"><h2 id="usage-title">このレポートについて</h2>
         <p><code>docs/phases/phase-*-result.md</code> を原本として生成したHTML版です。本文はすべてこのファイルに含まれ、インターネット接続や開発サーバーなしで閲覧できます。Markdown原本・README・公式資料へのリンクは、移動先のファイルまたは通信が必要です。</p>
+        <p>実画面の画像は同じフォルダーの <code>ui-ux-editor.png</code> を参照します。画像も一緒に保管してください。</p>
         <p>更新する場合はMarkdown原本を編集し、<strong>リポジトリのルート</strong>で <code>npm run docs:report</code> を実行してください。</p>
         <p>「印刷 / PDF保存」で全Phaseをまとめて印刷できます。ブラウザのページ内検索で、ファイル名・API名・検証項目を探せます。</p>
       </section>
       <footer>Generative Slide System · Phase 0–5 · 実装記録のHTML版</footer>
     </main>
   </div>
-  <script>document.getElementById('print-report').addEventListener('click', () => window.print())</script>
+  <script>
+    document.getElementById('print-report').addEventListener('click', () => window.print())
+    // 回答はこのページ内でのみ組み立てる。送信・保存は行わない。
+    document.querySelectorAll('[data-review-form]').forEach(form => {
+      const output = form.querySelector('[data-review-output]')
+      const status = form.querySelector('[data-copy-status]')
+      function updateAnswer() {
+        const fields = new FormData(form)
+        output.value = [
+          `質問ID: ${form.dataset.reviewId}`,
+          `件名: ${form.dataset.reviewTitle}`,
+          `プレビュー: ${fields.get('preview-size')}`,
+          `スクロール: ${fields.get('scroll-policy')}`,
+          `表示領域: ${fields.get('viewport')}`,
+          `補足: ${String(fields.get('notes') ?? '').trim() || 'なし'}`,
+        ].join('\n')
+      }
+      form.addEventListener('input', () => {
+        updateAnswer()
+        status.textContent = '回答を更新しました。外部への送信はありません。'
+      })
+      form.addEventListener('change', updateAnswer)
+      form.addEventListener('submit', event => event.preventDefault())
+      form.querySelector('[data-copy-review]').addEventListener('click', async () => {
+        updateAnswer()
+        output.focus()
+        output.select()
+        try {
+          await navigator.clipboard.writeText(output.value)
+          status.textContent = 'コピーしました。このチャットへ貼り付けてください。'
+        } catch {
+          status.textContent = '回答欄を選択しました。Ctrl/Cmd+Cでコピーし、このチャットへ貼り付けてください。'
+        }
+      })
+      updateAnswer()
+    })
+  </script>
 </body>
 </html>

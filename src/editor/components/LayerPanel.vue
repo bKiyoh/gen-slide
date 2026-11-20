@@ -5,15 +5,15 @@ const itemId = index => `item-${String(index).padStart(3, '0')}`
 </script>
 <template>
   <section class="editor-panel layer-panel" aria-labelledby="layers-title">
-    <div class="panel-heading"><h2 id="layers-title">レイヤー</h2><small>上から奥 → 手前</small></div>
+    <div class="panel-heading"><h2 id="layers-title">レイヤー</h2><small>対象を選ぶ</small></div>
     <div class="panel-body">
-    <div class="editor-actions layer-add-actions"><button type="button" :disabled="!editor.transition" @click="editor.addLayer('shape')">Shape追加</button><button type="button" :disabled="!editor.transition" @click="editor.addLayer('group')">Group追加</button></div>
+    <div class="editor-actions layer-add-actions"><button type="button" :disabled="!editor.transition" @click="editor.addLayer('shape')">図形追加</button><button type="button" :disabled="!editor.transition" @click="editor.addLayer('group')">グループ追加</button></div>
     <div class="layer-list">
       <p v-if="!editor.transition?.layers.length" class="control-note">図形を追加して制作を始めます。</p>
-      <div v-for="layer in editor.transition?.layers" :key="layer.id" class="layer-entry">
-        <button class="layer-row" :aria-pressed="editor.selection?.layerId === layer.id && !editor.selection?.itemId" @click="editor.selectLayer(layer.id)"><span>{{ layer.kind === 'group' ? '▦' : '▰' }}</span> {{ layer.id }}</button>
-        <details v-if="layer.kind === 'group'" class="layer-children"><summary>{{ getGeneratorCount(layer.generator) }} 個の生成子</summary>
-          <button v-for="index in getGeneratorCount(layer.generator)" :key="index" class="layer-row child-row" :aria-pressed="editor.selection?.layerId === layer.id && editor.selection?.itemId === itemId(index - 1)" @click="editor.selectLayer(layer.id, itemId(index - 1))">{{ itemId(index - 1) }} <span v-if="layer.overrides[itemId(index - 1)]" class="override-dot" title="個別設定あり">●</span></button>
+      <div v-for="(layer, layerIndex) in editor.transition?.layers" :key="layer.id" class="layer-entry">
+        <button class="layer-row" :data-layer-id="layer.id" :title="layer.id" :aria-pressed="editor.selection?.layerId === layer.id && !editor.selection?.itemId" @click="editor.selectLayer(layer.id)"><span aria-hidden="true">{{ layer.kind === 'group' ? '▦' : '▰' }}</span> {{ layer.kind === 'group' ? 'グループ' : '図形' }} {{ layerIndex + 1 }}</button>
+        <details v-if="layer.kind === 'group'" class="layer-children"><summary>{{ getGeneratorCount(layer.generator) }} 個の図形</summary>
+          <button v-for="index in getGeneratorCount(layer.generator)" :key="index" :title="itemId(index - 1)" class="layer-row child-row" :aria-pressed="editor.selection?.layerId === layer.id && editor.selection?.itemId === itemId(index - 1)" @click="editor.selectLayer(layer.id, itemId(index - 1))">図形 {{ index }} <span v-if="layer.overrides[itemId(index - 1)]" class="override-dot" title="個別設定あり">●</span></button>
         </details>
       </div>
     </div>

@@ -29,12 +29,20 @@ function renderMarkdown(markdown, phase) {
   const output = []
   const headings = []
   const isList = line => /^(?:- |\d+\. )/.test(line)
-  const isBlock = line => !line.trim() || /^(?:#{1,6} |```|\|)/.test(line) || isList(line)
+  const isBlock = line => !line.trim() || /^(?:#{1,6} |```|\||<!-- report-html:start -->)/.test(line) || isList(line)
   const cells = line => line.trim().slice(1, -1).split('|').map(cell => cell.trim())
   for (let index = 0; index < lines.length;) {
     const line = lines[index]
     if (!line.trim()) { index++; continue }
-    if (line.startsWith('```')) {
+    // リポジトリ内の記録に置いた配置図・回答フォームを、その位置に表示する。
+    if (line === '<!-- report-html:start -->') {
+      const html = []
+      index++
+      while (index < lines.length && lines[index] !== '<!-- report-html:end -->') html.push(lines[index++])
+      if (index === lines.length) throw new Error(`Phase ${phase}: HTMLブロックが閉じていません。`)
+      output.push(html.join('\n'))
+      index++
+    } else if (line.startsWith('```')) {
       const language = line.slice(3).trim()
       const code = []
       index++

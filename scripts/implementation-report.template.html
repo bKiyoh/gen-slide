@@ -95,6 +95,23 @@
     .record-body .check-item { display:flex; align-items:baseline; gap:9px; list-style:none; margin-left:-20px; }
     .check { color:var(--green); font-weight:700; }
     .back-top { display:inline-block; margin-top:22px; font-size:11px; }
+    .ux-review-link { display:block; padding:14px 18px; margin:20px 0; border-left:3px solid var(--blue); background:#edf2fa; font-size:13px; }
+    #ui-ux-review { scroll-margin-top:24px; }
+    .ux-layout { margin:20px 0; }
+    .ux-layout > svg { display:block; width:100%; height:auto; }
+    .ux-layout figcaption { margin-top:8px; color:var(--muted); font-size:12px; }
+    .review-form { padding:20px; margin:20px 0; border:1px solid #bdcadb; border-radius:6px; background:#f0f3f7; }
+    .review-form fieldset { min-width:0; margin:16px 0; padding:12px 14px; border:1px solid #cbd0d5; border-radius:4px; }
+    .review-form legend { padding:0 6px; font-weight:600; }
+    .review-form fieldset label { display:flex; align-items:baseline; gap:8px; margin:8px 0; }
+    .review-form input[type='radio'] { flex-shrink:0; accent-color:var(--blue); }
+    .review-field { display:grid; gap:6px; margin:16px 0; }
+    .review-field select,.review-field textarea { min-width:0; width:100%; padding:8px 10px; border:1px solid #aab5c1; border-radius:4px; background:white; color:var(--ink); font:inherit; line-height:1.65; }
+    .review-field textarea { resize:vertical; }
+    .review-field textarea[readonly] { background:#fafcfe; }
+    .review-form input:focus-visible,.review-form select:focus-visible,.review-form textarea:focus-visible { outline:3px solid #8eb4ff; outline-offset:3px; }
+    .review-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+    .review-actions span { color:var(--muted); font-size:12px; }
     .usage { padding:22px 24px; background:#edf1f5; border-radius:6px; font-size:12px; }
     .usage h2 { margin:0 0 10px; font-size:15px; }
     .usage p { margin:7px 0; }
@@ -113,7 +130,7 @@
       <div class="brand-mark" aria-hidden="true"><span></span><span></span></div>
       <div class="brand">GENERATIVE<br />SLIDE SYSTEM</div>
       <p class="caption">Implementation &amp; validation<br />開発の積み上げを、一つの記録に。</p>
-      <nav aria-label="Phaseの目次"><a href="#overview"><span>↗</span> 全体概要</a>{{NAV}}{{PLANNED_NAV}}<a href="#usage"><span>?</span> このレポートについて</a></nav>
+      <nav aria-label="Phaseの目次"><a href="#overview"><span>↗</span> 全体概要</a><a href="#ui-ux-implementation"><span>↗</span> UI / UX改善結果</a>{{NAV}}{{PLANNED_NAV}}<a href="#usage"><span>?</span> このレポートについて</a></nav>
       <div class="sidebar-bottom">収録範囲 Phase {{RANGE}}<br />記録の最新確認日 {{LATEST_DATE}}<a href="../README.md">READMEを見る ↗</a></div>
     </aside>
     <main id="overview">
@@ -122,6 +139,7 @@
         <p class="lead">四角形を描く基盤から、規則に基づく生成、時刻からのアニメーション評価、編集・保存まで。各Phaseの実装内容・設計判断・検証結果・引き継ぎ事項をまとめています。</p>
         <div class="hero-metrics"><span><b>Phase {{LATEST_PHASE}}</b> まで実装</span><span><b>{{LATEST_TESTS}}</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
       </header>
+      <a class="ux-review-link" href="#ui-ux-implementation">UI / UX改善の実装結果を見る → 小型プレビューとスクロールしない編集画面</a>
       <section aria-labelledby="progress-title"><div class="section-heading"><h2 id="progress-title">ここまでの実装</h2><span>各カードから全文へ移動できます</span></div><div class="phase-cards">{{CARDS}}</div></section>
       <p class="overview-note">各Phaseの本文は、そのPhaseを完了した時点の記録です。「未実装」「次Phase」は当時の状態を示します。スライダー入力のレビュー対応も収録しています。</p>
       <section class="validation" aria-labelledby="validation-title"><div class="section-heading"><h2 id="validation-title">検証結果の一覧</h2><span>Markdown原本の記録値</span></div>
@@ -132,12 +150,49 @@
       {{RECORDS}}
       <section id="usage" class="usage" aria-labelledby="usage-title"><h2 id="usage-title">このレポートについて</h2>
         <p><code>docs/phases/phase-*-result.md</code> を原本として生成したHTML版です。本文はすべてこのファイルに含まれ、インターネット接続や開発サーバーなしで閲覧できます。Markdown原本・README・公式資料へのリンクは、移動先のファイルまたは通信が必要です。</p>
+        <p>実画面の画像は同じフォルダーの <code>ui-ux-editor.png</code> を参照します。画像も一緒に保管してください。</p>
         <p>更新する場合はMarkdown原本を編集し、<strong>リポジトリのルート</strong>で <code>npm run docs:report</code> を実行してください。</p>
         <p>「印刷 / PDF保存」で全Phaseをまとめて印刷できます。ブラウザのページ内検索で、ファイル名・API名・検証項目を探せます。</p>
       </section>
       <footer>Generative Slide System · Phase {{RANGE}} · 実装記録のHTML版</footer>
     </main>
   </div>
-  <script>document.getElementById('print-report').addEventListener('click', () => window.print())</script>
+  <script>
+    document.getElementById('print-report').addEventListener('click', () => window.print())
+    // 回答はこのページ内でのみ組み立てる。送信・保存は行わない。
+    document.querySelectorAll('[data-review-form]').forEach(form => {
+      const output = form.querySelector('[data-review-output]')
+      const status = form.querySelector('[data-copy-status]')
+      function updateAnswer() {
+        const fields = new FormData(form)
+        output.value = [
+          `質問ID: ${form.dataset.reviewId}`,
+          `件名: ${form.dataset.reviewTitle}`,
+          `プレビュー: ${fields.get('preview-size')}`,
+          `スクロール: ${fields.get('scroll-policy')}`,
+          `表示領域: ${fields.get('viewport')}`,
+          `補足: ${String(fields.get('notes') ?? '').trim() || 'なし'}`,
+        ].join('\n')
+      }
+      form.addEventListener('input', () => {
+        updateAnswer()
+        status.textContent = '回答を更新しました。外部への送信はありません。'
+      })
+      form.addEventListener('change', updateAnswer)
+      form.addEventListener('submit', event => event.preventDefault())
+      form.querySelector('[data-copy-review]').addEventListener('click', async () => {
+        updateAnswer()
+        output.focus()
+        output.select()
+        try {
+          await navigator.clipboard.writeText(output.value)
+          status.textContent = 'コピーしました。このチャットへ貼り付けてください。'
+        } catch {
+          status.textContent = '回答欄を選択しました。Ctrl/Cmd+Cでコピーし、このチャットへ貼り付けてください。'
+        }
+      })
+      updateAnswer()
+    })
+  </script>
 </body>
 </html>

@@ -25,14 +25,14 @@ function compareDesigns(comparison) {
 </script>
 
 <template>
-  <nav v-if="sample !== 'presentation'" class="sample-switch" :class="{ 'editor-navigation': sample === 'editor' }" aria-label="検証サンプル">
+  <nav v-if="sample !== 'presentation' && sample !== 'editor'" class="sample-switch" aria-label="検証サンプル">
     <button type="button" :aria-pressed="sample === 'editor'" @click="navigate('editor')">Phase 3 · Editor</button>
     <button type="button" @click="navigate('presentation')">Phase 4 · Presentation</button>
     <button type="button" :aria-pressed="sample === 'phase2'" @click="navigate('phase2')">Phase 2 · 時刻の評価</button>
     <button type="button" :aria-pressed="sample === 'phase1'" @click="navigate('phase1')">Phase 1 · 図形の生成</button>
     <button type="button" :aria-pressed="sample === 'phase0'" @click="navigate('phase0')">Phase 0 · 描画基盤</button>
   </nav>
-  <EditorView v-if="sample === 'editor'" ref="editor" :initial-project="project" @present="navigate('presentation')" @compare-designs="compareDesigns" />
+  <EditorView v-if="sample === 'editor'" ref="editor" :initial-project="project" @present="navigate('presentation')" @compare-designs="compareDesigns" @sample="navigate" />
   <PresentationView v-else-if="sample === 'presentation'" :project="presentationProject" @edit-project="navigate('editor')" />
   <PhaseTwoSample v-else-if="sample === 'phase2'" />
   <PhaseOneSample v-else-if="sample === 'phase1'" />
