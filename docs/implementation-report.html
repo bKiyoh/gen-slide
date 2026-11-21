@@ -892,7 +892,7 @@ npm run preview -- --host 127.0.0.1</code></pre>
   <h2 id="phase-5-title">直接操作と取り消し<span>実装・検証記録</span></h2></div>
   <a class="source-link" href="phases/phase-5-result.md">Markdown原本 ↗</a></header>
   <div class="report-meta"><span>確認日 <time datetime="2026-11-21">2026-11-21</time></span><span>テスト <b>105件成功</b></span><span>ビルド <b>成功</b></span></div>
-  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li><li><a href="#phase-5-section-14">UI / UX 改善検討 — 2026-11-20・実装前の記録</a></li><li><a href="#phase-5-section-21">UI / UX改善の実装 — UI-UX-01・2026-11-20</a></li><li><a href="#phase-5-section-28">JSON読込を既存作品への追加方式へ変更 — 2026-11-21</a></li><li><a href="#phase-5-section-34">インポート用の見本JSON — 2026-11-21</a></li></ul></details>
+  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li><li><a href="#phase-5-section-14">UI / UX 改善検討 — 2026-11-20・実装前の記録</a></li><li><a href="#phase-5-section-21">UI / UX改善の実装 — UI-UX-01・2026-11-20</a></li><li><a href="#phase-5-section-28">JSON読込を既存作品への追加方式へ変更 — 2026-11-21</a></li><li><a href="#phase-5-section-34">インポート用の見本JSON — 2026-11-21</a></li><li><a href="#phase-5-section-37">四角形の基本4パターンをJSON化 — 2026-11-21</a></li></ul></details>
   <div class="record-body"><p>確認日: 2026-11-21（初回実装の確認は2026-11-19、UI配置改善は2026-11-20）。Phase 5で停止し、Phase 6には進んでいません。</p>
 <h3 id="phase-5-section-0">作業前のコミットと今回の範囲</h3>
 <p>承認済みのPhase 4、発表構成とEditorプレビューの連動、cover廃止、設計・仕様・実装記録を <code>5dd86f9</code>（feat: complete Phase 4 presentation and remove cover restrictions）にコミットしました。Phase 5の変更はレビュー用に未コミットで残しています。</p>
@@ -1317,7 +1317,38 @@ npm run docs:report</code></pre>
 <li>3演出を合計192時点で評価し、途中の500msで図形が表示対象になることを確認。</li>
 <li>初期Projectへ同じ見本を2回追加し、既存データと入力JSONの非破壊、IDの一意性、追加スライドの演出参照、演出数・スライド数の増加を確認。</li>
 <li><code>npm run build</code> と <code>npm run docs:report</code>：成功。本番用 <code>dist/examples/import-demo.json</code> と原本が一致すること、HTML内の見本へのリンクを確認。従来からの500 kB超のチャンク警告は残っています。</li>
-<li>この色違いJSON自体の実ブラウザでの見た目は今回は未検証。前節で検証した追加処理と、既存の意匠ファクトリーを利用しています。アプリコードの変更がないため、ユニットテストの再実行・新規追加は行っていません。</li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
+<li>この色違いJSON自体の実ブラウザでの見た目は今回は未検証。前節で検証した追加処理と、既存の意匠ファクトリーを利用しています。アプリコードの変更がないため、ユニットテストの再実行・新規追加は行っていません。</li></ul>
+<div id="basic-four-patterns-json"></div>
+<h3 id="phase-5-section-37">四角形の基本4パターンをJSON化 — 2026-11-21</h3>
+<p>ユーザーと整理したA〜Dの表をもとに、各パターンを1演出とした <code>public/examples/basic-four-patterns.json</code> を作成しました。4演出・5スライドのProject JSONです。すべてPhase 5までのGrid / Linear、色の規則、Overrides、キーフレームで構成し、アプリ本体への新機能やPhase 6の実装は追加していません。</p>
+<p><a href="../public/examples/basic-four-patterns.json" download="basic-four-patterns.json">基本4パターンのインポート用JSONを保存</a></p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="四角形の基本4パターンをJSON化 — 2026-11-21"><table><thead><tr><th scope="col">パターン</th><th scope="col">デザイン</th><th scope="col">アニメーション</th><th scope="col">長さ・確認時刻</th></tr></thead><tbody><tr><td>A：グリッド</td><td>7列×4行、28個の四角形を規則的に配置</td><td>回転・X/Y方向の伸縮・上下の波</td><td>2400ms、800ms付近で確認</td></tr>
+<tr><td>B：分割</td><td>6区画の長方形・平行四辺形で画面を分割</td><td>左右交互のスライド・傾斜</td><td>1820ms、900msで区画が整列</td></tr>
+<tr><td>C：重なり</td><td>大小4枚の四角形を、中心をずらして重ねる</td><td>時間差の拡大縮小・回転</td><td>1800ms、900ms付近で確認</td></tr>
+<tr><td>D：変形</td><td>8本の短冊の四隅の枠と、3枚の平行四辺形の折れた帯</td><td>11部品の移動・回転・倍率による分解・再構築</td><td>2600ms、800msで組立、1520msで分解、2350msで再構築</td></tr></tbody></table></div>
+<p>Aの波は、行・列に応じて各図形のキー時刻をずらして作っています。Dは組立位置を基本値とし、そこからの移動差分・回転・倍率をキーへ保存します。800msと2350msで同じ形に戻るよう設計しました。実行時に新しい波の計算機能や頂点操作を要求しない、既存の編集機能で変更可能なデータです。</p>
+<p>スライドはタイトル → コンテンツ3枚 → クロージングの5枚。最初の4枚から次へ進む際に、A → B → C → Dを順に再生します。本文には登録済みのVueスライドを使います。演出は開始・終了で透明になり、スライドを残す構成です。</p>
+<h4 id="phase-5-section-38">ファイルと利用手順</h4>
+<ul><li><code>public/examples/basic-four-patterns.json</code>：インポートする原本。約254 KiB。</li>
+<li><code>scripts/build-basic-pattern-examples.mjs</code>：図形・キーフレームを組み立ててJSONを再生成するスクリプト。ブラウザからは実行しません。</li>
+<li><code>README.md</code>：4パターンへのリンクを追加。</li>
+<li><code>docs/phases/phase-5-result.md</code>、<code>docs/implementation-report.html</code>：今回の原本と生成レポート。</li></ul>
+<p>「ファイル → JSON読込」で <code>public/examples/basic-four-patterns.json</code> を選び、「このJSONを追加」で確定してください。演出選択欄から「A：グリッド」「B：分割」「C：重なり」「D：変形」を選んで再生できます。停止中の0msでは透明なので、動きを確認する場合は「再生 / 再開」か表の確認時刻を使います。</p>
+<p>再生成・ビルド・レポート生成の実行場所は<strong>リポジトリのルート</strong>です。</p>
+<pre aria-label="sh"><code>node scripts/build-basic-pattern-examples.mjs
+npm run build
+npm run docs:report</code></pre>
+<h4 id="phase-5-section-39">検証結果・制約</h4>
+<ul><li>既存の <code>parseProject</code> と <code>serializeProject</code> でスキーマ・全ID・演出参照・キーの端点を検証。</li>
+<li>4演出を10ms間隔の合計866時点で評価し、変換行列が有限であることと開始・終了の透明状態を確認。</li>
+<li>Aの整列時の7列×4行と波の時刻差、Bの6区画の整列と傾斜変化、Cの4枚の表示、Dの分解状態と800ms・2350msの描画状態の完全一致を確認。</li>
+<li>同じJSONの2回追加で、既存作品・入力JSONの保持、IDの衝突解消と追加スライドの参照を確認。</li>
+<li><code>npm run build</code>：成功。従来からの500 kB超のチャンク警告は残っています。JavaScriptのバンドルは既存実装と同じで、JSONをpublic配下へ追加しています。</li>
+<li>本番版ChromeのWebGPU / WebGL2で4演出・5スライドを追加し、既存作品の保持、シーク・再生・終了時刻、16:9、保存後の再読込、1440×900の画面内収まりを確認。未処理ページ例外・Vue警告は0件。</li>
+<li>A〜Dの描画画像を目視確認。Dは800msの組立、1520msの分解、2350msの再構築を表示して確認しました。WebGPUの発表モードでは、既存スライドから追加された5枚まで進め、A〜Dの演出を順に再生できました。</li>
+<li><code>npm run docs:report</code>：成功。HTML内の見出し・JSONリンクを確認し、ビルドへ同梱したJSONと原本の一致、再生成結果の一致も確認。</li>
+<li>新しいアプリコードがないため、ユニットテストの新規追加・再実行は行っていません。検証対象は生成したデータと既存の追加・再生機能の組み合わせです。</li>
+<li>Dは四角形の組み替えによる表現です。自由頂点変形、入れ子グループ、新しいGeneratorやModifierは追加していません。Phase 6へは進んでいません。</li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
       <section id="usage" class="usage" aria-labelledby="usage-title"><h2 id="usage-title">このレポートについて</h2>
         <p><code>docs/phases/phase-*-result.md</code> を原本として生成したHTML版です。本文はすべてこのファイルに含まれ、インターネット接続や開発サーバーなしで閲覧できます。Markdown原本・README・公式資料へのリンクは、移動先のファイルまたは通信が必要です。</p>
         <p>実画面の画像は同じフォルダーの <code>ui-ux-editor.png</code> を参照します。画像も一緒に保管してください。</p>
