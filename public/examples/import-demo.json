@@ -1,0 +1,711 @@
+{
+  "schemaVersion": 1,
+  "transitions": [
+    {
+      "id": "transition-001",
+      "name": "追加サンプル 01 · ミントスイープ",
+      "durationMs": 1280,
+      "switchAtMs": 600,
+      "layers": [
+        {
+          "id": "group-001",
+          "kind": "group",
+          "template": {
+            "geometry": {
+              "type": "parallelogram",
+              "width": 360,
+              "height": 1800,
+              "skewX": -16
+            },
+            "style": {
+              "color": "#24C8A3",
+              "opacity": 1
+            },
+            "transform": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "scaleX": 1,
+              "scaleY": 1
+            }
+          },
+          "generator": {
+            "type": "linear",
+            "count": 8,
+            "startX": -90,
+            "startY": 540,
+            "stepX": 300,
+            "stepY": 0
+          },
+          "modifiers": [
+            {
+              "property": "style.color",
+              "type": "alternate",
+              "values": [
+                "#24C8A3",
+                "#4C70FF"
+              ]
+            }
+          ],
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "tracks": [],
+          "childAnimation": {
+            "staggerMs": 25,
+            "tracks": [
+              {
+                "property": "transform.x",
+                "mode": "offset",
+                "keyframes": [
+                  {
+                    "timeMs": 0,
+                    "value": -2600,
+                    "easing": "easeOutCubic"
+                  },
+                  {
+                    "timeMs": 420,
+                    "value": 0,
+                    "easing": "easeInOutCubic"
+                  },
+                  {
+                    "timeMs": 620,
+                    "value": 0,
+                    "easing": "easeInCubic"
+                  },
+                  {
+                    "timeMs": 1080,
+                    "value": 2600,
+                    "easing": "easeInOutCubic"
+                  }
+                ]
+              },
+              {
+                "property": "style.opacity",
+                "mode": "absolute",
+                "keyframes": [
+                  {
+                    "timeMs": 0,
+                    "value": 0,
+                    "easing": "easeInOutCubic"
+                  },
+                  {
+                    "timeMs": 60,
+                    "value": 1,
+                    "easing": "easeInOutCubic"
+                  },
+                  {
+                    "timeMs": 1020,
+                    "value": 1,
+                    "easing": "easeInOutCubic"
+                  },
+                  {
+                    "timeMs": 1080,
+                    "value": 0,
+                    "easing": "easeInOutCubic"
+                  }
+                ]
+              }
+            ]
+          },
+          "overrides": {}
+        }
+      ]
+    },
+    {
+      "id": "transition-002",
+      "name": "追加サンプル 02 · パープルブロック",
+      "durationMs": 1160,
+      "switchAtMs": 580,
+      "layers": [
+        {
+          "id": "shape-001",
+          "kind": "shape",
+          "geometry": {
+            "type": "rectangle",
+            "width": 384,
+            "height": 216,
+            "skewX": 0
+          },
+          "style": {
+            "color": "#8B5CF6",
+            "opacity": 1
+          },
+          "transform": {
+            "x": 960,
+            "y": 540,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "tracks": [
+            {
+              "property": "transform.scaleX",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 460,
+                  "value": 6,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 650,
+                  "value": 6,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 1100,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            },
+            {
+              "property": "transform.scaleY",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 460,
+                  "value": 6,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 650,
+                  "value": 6,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 1100,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            },
+            {
+              "property": "style.opacity",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 60,
+                  "value": 1,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 1060,
+                  "value": 1,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 1120,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shape-002",
+          "kind": "shape",
+          "geometry": {
+            "type": "rectangle",
+            "width": 256,
+            "height": 144,
+            "skewX": 0
+          },
+          "style": {
+            "color": "#F472B6",
+            "opacity": 1
+          },
+          "transform": {
+            "x": 960,
+            "y": 540,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "tracks": [
+            {
+              "property": "transform.scaleX",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 100,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 540,
+                  "value": 7,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 650,
+                  "value": 7,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 1020,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            },
+            {
+              "property": "transform.scaleY",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 100,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 540,
+                  "value": 7,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 650,
+                  "value": 7,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 1020,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            },
+            {
+              "property": "style.opacity",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 140,
+                  "value": 1,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 990,
+                  "value": 1,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 1050,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shape-003",
+          "kind": "shape",
+          "geometry": {
+            "type": "rectangle",
+            "width": 96,
+            "height": 96,
+            "skewX": 0
+          },
+          "style": {
+            "color": "#F8FAFC",
+            "opacity": 1
+          },
+          "transform": {
+            "x": 960,
+            "y": 540,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "tracks": [
+            {
+              "property": "transform.scaleX",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 240,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 520,
+                  "value": 2,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 750,
+                  "value": 2,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 950,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            },
+            {
+              "property": "transform.scaleY",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 240,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 520,
+                  "value": 2,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 750,
+                  "value": 2,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 950,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            },
+            {
+              "property": "transform.rotation",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": -45,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 950,
+                  "value": 135,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            },
+            {
+              "property": "style.opacity",
+              "mode": "absolute",
+              "keyframes": [
+                {
+                  "timeMs": 0,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 260,
+                  "value": 1,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 900,
+                  "value": 1,
+                  "easing": "easeInOutCubic"
+                },
+                {
+                  "timeMs": 960,
+                  "value": 0,
+                  "easing": "easeInOutCubic"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transition-003",
+      "name": "追加サンプル 03 · アンバーシャッター",
+      "durationMs": 1280,
+      "switchAtMs": 620,
+      "layers": [
+        {
+          "id": "group-002",
+          "kind": "group",
+          "template": {
+            "geometry": {
+              "type": "rectangle",
+              "width": 2000,
+              "height": 182,
+              "skewX": 0
+            },
+            "style": {
+              "color": "#162A3A",
+              "opacity": 1
+            },
+            "transform": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "scaleX": 1,
+              "scaleY": 1
+            }
+          },
+          "generator": {
+            "type": "linear",
+            "count": 6,
+            "startX": 960,
+            "startY": 90,
+            "stepX": 0,
+            "stepY": 180
+          },
+          "modifiers": [
+            {
+              "property": "style.color",
+              "type": "alternate",
+              "values": [
+                "#162A3A",
+                "#FDBA42",
+                "#25C5B5"
+              ]
+            }
+          ],
+          "transform": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          "tracks": [],
+          "childAnimation": {
+            "staggerMs": 35,
+            "tracks": [
+              {
+                "property": "transform.x",
+                "mode": "offset",
+                "keyframes": [
+                  {
+                    "timeMs": 0,
+                    "value": -2100,
+                    "easing": "easeOutCubic"
+                  },
+                  {
+                    "timeMs": 400,
+                    "value": 0,
+                    "easing": "easeInOutCubic"
+                  },
+                  {
+                    "timeMs": 680,
+                    "value": 0,
+                    "easing": "easeInCubic"
+                  },
+                  {
+                    "timeMs": 1080,
+                    "value": 2100,
+                    "easing": "easeInOutCubic"
+                  }
+                ]
+              },
+              {
+                "property": "style.opacity",
+                "mode": "absolute",
+                "keyframes": [
+                  {
+                    "timeMs": 0,
+                    "value": 0,
+                    "easing": "easeInOutCubic"
+                  },
+                  {
+                    "timeMs": 60,
+                    "value": 1,
+                    "easing": "easeInOutCubic"
+                  },
+                  {
+                    "timeMs": 1020,
+                    "value": 1,
+                    "easing": "easeInOutCubic"
+                  },
+                  {
+                    "timeMs": 1080,
+                    "value": 0,
+                    "easing": "easeInOutCubic"
+                  }
+                ]
+              }
+            ]
+          },
+          "overrides": {
+            "item-001": {
+              "tracks": [
+                {
+                  "property": "transform.x",
+                  "mode": "offset",
+                  "keyframes": [
+                    {
+                      "timeMs": 0,
+                      "value": 2100,
+                      "easing": "easeInOutCubic"
+                    },
+                    {
+                      "timeMs": 35,
+                      "value": 2100,
+                      "easing": "easeOutCubic"
+                    },
+                    {
+                      "timeMs": 435,
+                      "value": 0,
+                      "easing": "easeInOutCubic"
+                    },
+                    {
+                      "timeMs": 715,
+                      "value": 0,
+                      "easing": "easeInCubic"
+                    },
+                    {
+                      "timeMs": 1115,
+                      "value": -2100,
+                      "easing": "easeInOutCubic"
+                    }
+                  ]
+                }
+              ]
+            },
+            "item-003": {
+              "tracks": [
+                {
+                  "property": "transform.x",
+                  "mode": "offset",
+                  "keyframes": [
+                    {
+                      "timeMs": 0,
+                      "value": 2100,
+                      "easing": "easeInOutCubic"
+                    },
+                    {
+                      "timeMs": 105,
+                      "value": 2100,
+                      "easing": "easeOutCubic"
+                    },
+                    {
+                      "timeMs": 505,
+                      "value": 0,
+                      "easing": "easeInOutCubic"
+                    },
+                    {
+                      "timeMs": 785,
+                      "value": 0,
+                      "easing": "easeInCubic"
+                    },
+                    {
+                      "timeMs": 1185,
+                      "value": -2100,
+                      "easing": "easeInOutCubic"
+                    }
+                  ]
+                }
+              ]
+            },
+            "item-005": {
+              "tracks": [
+                {
+                  "property": "transform.x",
+                  "mode": "offset",
+                  "keyframes": [
+                    {
+                      "timeMs": 0,
+                      "value": 2100,
+                      "easing": "easeInOutCubic"
+                    },
+                    {
+                      "timeMs": 175,
+                      "value": 2100,
+                      "easing": "easeOutCubic"
+                    },
+                    {
+                      "timeMs": 575,
+                      "value": 0,
+                      "easing": "easeInOutCubic"
+                    },
+                    {
+                      "timeMs": 855,
+                      "value": 0,
+                      "easing": "easeInCubic"
+                    },
+                    {
+                      "timeMs": 1255,
+                      "value": -2100,
+                      "easing": "easeInOutCubic"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "slide-001",
+      "component": "TitleSlide",
+      "transitionId": "transition-001"
+    },
+    {
+      "id": "slide-002",
+      "component": "ContentSlide",
+      "transitionId": "transition-002"
+    },
+    {
+      "id": "slide-003",
+      "component": "ContentSlide",
+      "transitionId": "transition-003"
+    },
+    {
+      "id": "slide-004",
+      "component": "ClosingSlide",
+      "transitionId": null
+    }
+  ]
+}

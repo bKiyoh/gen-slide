@@ -892,7 +892,7 @@ npm run preview -- --host 127.0.0.1</code></pre>
   <h2 id="phase-5-title">直接操作と取り消し<span>実装・検証記録</span></h2></div>
   <a class="source-link" href="phases/phase-5-result.md">Markdown原本 ↗</a></header>
   <div class="report-meta"><span>確認日 <time datetime="2026-11-21">2026-11-21</time></span><span>テスト <b>105件成功</b></span><span>ビルド <b>成功</b></span></div>
-  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li><li><a href="#phase-5-section-14">UI / UX 改善検討 — 2026-11-20・実装前の記録</a></li><li><a href="#phase-5-section-21">UI / UX改善の実装 — UI-UX-01・2026-11-20</a></li><li><a href="#phase-5-section-28">JSON読込を既存作品への追加方式へ変更 — 2026-11-21</a></li></ul></details>
+  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li><li><a href="#phase-5-section-14">UI / UX 改善検討 — 2026-11-20・実装前の記録</a></li><li><a href="#phase-5-section-21">UI / UX改善の実装 — UI-UX-01・2026-11-20</a></li><li><a href="#phase-5-section-28">JSON読込を既存作品への追加方式へ変更 — 2026-11-21</a></li><li><a href="#phase-5-section-34">インポート用の見本JSON — 2026-11-21</a></li></ul></details>
   <div class="record-body"><p>確認日: 2026-11-21（初回実装の確認は2026-11-19、UI配置改善は2026-11-20）。Phase 5で停止し、Phase 6には進んでいません。</p>
 <h3 id="phase-5-section-0">作業前のコミットと今回の範囲</h3>
 <p>承認済みのPhase 4、発表構成とEditorプレビューの連動、cover廃止、設計・仕様・実装記録を <code>5dd86f9</code>（feat: complete Phase 4 presentation and remove cover restrictions）にコミットしました。Phase 5の変更はレビュー用に未コミットで残しています。</p>
@@ -1296,7 +1296,28 @@ npm run docs:report</code></pre>
 <li>ブラウザの確認は一時ディレクトリの既存Playwright環境を使い、実ユーザーのブラウザ保存領域にはアクセスしていません。Safari・Firefox、巨大なJSONでの性能・実機タッチ操作は未検証です。</li></ul>
 <h4 id="phase-5-section-33">制約と既存の作品について</h4>
 <p>同じJSONを繰り返し読み込むと、それぞれ別のコピーとして追加します。同じ名前も保持するため、必要に応じて演出設定で名前を変更できます。保存容量や履歴件数の上限は従来どおりです。</p>
-<p>この修正は今後の読込で既存作品を保持するためのものです。以前の方式ですでに置き換えられ、保存済みの過去作品を自動復元する機能は含みません。以前に書き出したJSONがあれば、新しい追加方式で取り込めます。</p></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
+<p>この修正は今後の読込で既存作品を保持するためのものです。以前の方式ですでに置き換えられ、保存済みの過去作品を自動復元する機能は含みません。以前に書き出したJSONがあれば、新しい追加方式で取り込めます。</p>
+<div id="import-demo-json"></div>
+<h3 id="phase-5-section-34">インポート用の見本JSON — 2026-11-21</h3>
+<p>ユーザーの依頼により、追加インポートを試せる <code>public/examples/import-demo.json</code> を作成しました。3演出・4スライド、約19 kBのProject JSONです。既存の意匠データを色違いにして使い、生成方式や編集機能は追加していません。</p>
+<p><a href="../public/examples/import-demo.json" download="import-demo.json">インポート用JSON（import-demo.json）を保存</a></p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="インポート用の見本JSON — 2026-11-21"><table><thead><tr><th scope="col">演出名</th><th scope="col">内容</th><th scope="col">長さ</th></tr></thead><tbody><tr><td>追加サンプル 01 · ミントスイープ</td><td>ミントと青の斜線が時間差で通過</td><td>1280 ms</td></tr>
+<tr><td>追加サンプル 02 · パープルブロック</td><td>紫とピンクのブロックが中央から拡大</td><td>1160 ms</td></tr>
+<tr><td>追加サンプル 03 · アンバーシャッター</td><td>アンバーとミントの帯が左右から交互に進入</td><td>1280 ms</td></tr></tbody></table></div>
+<p>スライドはタイトル → コンテンツ → コンテンツ → クロージングの4枚です。最初の3枚に上記の演出を順番に設定し、最後の1枚は演出なしにしています。登録済みのVueスライドを利用するため、本文の内容は既存スライドと共通です。</p>
+<h4 id="phase-5-section-35">使い方と変更ファイル</h4>
+<ol><li>アプリの「ファイル → JSON読込」で、リポジトリ内の <code>public/examples/import-demo.json</code> を選びます。</li>
+<li>3演出・4スライドを追加する確認が出たら「このJSONを追加」で確定します。</li>
+<li>演出選択欄の「追加サンプル」で始まる演出を選び、「再生 / 再開」で動きを確認します。開始時点は透明なので、停止中の0msだけでは図形が見えません。</li>
+<li>「スライドに割当」では追加された4枚と演出の対応、「発表する」では実際のスライド切替を確認できます。不要なら追加直後に「元に戻す」で追加全体を取り消せます。</li></ol>
+<p>追加ファイルは <code>public/examples/import-demo.json</code>。<code>README.md</code> に入口を追記し、この原本から <code>docs/implementation-report.html</code> を再生成しました。既存のアプリ実装には変更を加えていません。Phase 6へも進んでいません。</p>
+<h4 id="phase-5-section-36">検証結果と実行場所</h4>
+<p>検証コマンドの実行場所は<strong>リポジトリのルート</strong>です。Node.jsでファイルを読み込み、既存の <code>parseProject</code>、<code>evaluateTransition</code>、<code>appendProject</code>、<code>applyProjectEdit</code> を使って検証しました。</p>
+<ul><li>JSONのスキーマ・全IDの一意性・スライドの演出参照を検証。</li>
+<li>3演出を合計192時点で評価し、途中の500msで図形が表示対象になることを確認。</li>
+<li>初期Projectへ同じ見本を2回追加し、既存データと入力JSONの非破壊、IDの一意性、追加スライドの演出参照、演出数・スライド数の増加を確認。</li>
+<li><code>npm run build</code> と <code>npm run docs:report</code>：成功。本番用 <code>dist/examples/import-demo.json</code> と原本が一致すること、HTML内の見本へのリンクを確認。従来からの500 kB超のチャンク警告は残っています。</li>
+<li>この色違いJSON自体の実ブラウザでの見た目は今回は未検証。前節で検証した追加処理と、既存の意匠ファクトリーを利用しています。アプリコードの変更がないため、ユニットテストの再実行・新規追加は行っていません。</li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
       <section id="usage" class="usage" aria-labelledby="usage-title"><h2 id="usage-title">このレポートについて</h2>
         <p><code>docs/phases/phase-*-result.md</code> を原本として生成したHTML版です。本文はすべてこのファイルに含まれ、インターネット接続や開発サーバーなしで閲覧できます。Markdown原本・README・公式資料へのリンクは、移動先のファイルまたは通信が必要です。</p>
         <p>実画面の画像は同じフォルダーの <code>ui-ux-editor.png</code> を参照します。画像も一緒に保管してください。</p>
