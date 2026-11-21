@@ -90,6 +90,39 @@ export function nextId(project, prefix) {
   return `${prefix}-${String(index).padStart(3, '0')}`
 }
 
+/** 検証済みのProjectを編集用draftへ追加する。applyProjectEditの中で呼び、追加した演出IDを返す。 */
+export function appendProject(project, incoming) {
+  validateProject(incoming)
+  const added = JSON.parse(JSON.stringify(incoming))
+  const entries = value => value.transitions.flatMap(t => [t, ...t.layers]).concat(value.slides)
+  const occupied = new Set(entries(project).map(entry => entry.id))
+  // 先に全IDを予約し、衝突の解消で取り込み側の別のIDを奪わないようにする。
+  const reserved = new Set([...occupied, ...entries(added).map(entry => entry.id)])
+  const transitionIds = new Map()
+  function assignId(entry, prefix) {
+    const original = entry.id
+    if (occupied.has(original)) {
+      let index = 1
+      do { entry.id = `${prefix}-${String(index++).padStart(3, '0')}` } while (reserved.has(entry.id))
+    }
+    reserved.add(entry.id)
+    occupied.add(entry.id)
+    return original
+  }
+  for (const transition of added.transitions) {
+    const original = assignId(transition, 'transition')
+    transitionIds.set(original, transition.id)
+    for (const layer of transition.layers) assignId(layer, layer.kind)
+  }
+  for (const slide of added.slides) {
+    assignId(slide, 'slide')
+    if (slide.transitionId !== undefined && slide.transitionId !== null) slide.transitionId = transitionIds.get(slide.transitionId)
+  }
+  project.transitions.push(...added.transitions)
+  project.slides.push(...added.slides)
+  return added.transitions.map(transition => transition.id)
+}
+
 export function duplicateTransition(project, id) {
   const original = project.transitions.find(t => t.id === id)
   const copy = JSON.parse(JSON.stringify(original))

@@ -47,7 +47,7 @@ const previewCaption = computed(() => {
 const selectedIds = computed(() => !e.selection ? [] : [e.selection.itemId ? e.selection.layerId + '/' + e.selection.itemId : e.selection.layerId])
 function setDuration(value) { e.editTransition(t => { t.durationMs = value; t.switchAtMs = Math.min(t.switchAtMs, value) }) }
 function importFile(event) { e.prepareImport(event.target.files[0]); event.target.value = '' }
-function applyImport() { e.applyImport(); closeTool() }
+function applyImport() { if (e.applyImport()) closeTool() }
 </script>
 <template>
   <main class="transition-editor">
@@ -109,14 +109,14 @@ function applyImport() { e.applyImport(); closeTool() }
         <section v-show="tool === 'file'" aria-label="ファイル操作">
           <p>編集内容はこのブラウザに自動保存されます。別の端末へ持ち運ぶ場合はJSONを保存してください。</p>
           <div class="editor-actions"><button type="button" @click="e.exportProject">JSON出力</button><label class="file-button">JSON読込<input id="project-import" type="file" accept=".json,application/json" @change="importFile" /></label></div>
-          <section v-if="e.pendingImport" class="import-review" aria-label="JSON読込の確認"><p>{{ e.pendingImport.name }} — 検証済み。演出 {{ e.pendingImport.project.transitions.length }} 件、スライド {{ e.pendingImport.project.slides.length }} 件。</p><p>適用すると現在のProjectを置き換えます。必要なら先にJSON出力してください。</p><div class="editor-actions"><button @click="applyImport">このJSONで置き換える</button><button @click="e.pendingImport = null">キャンセル</button></div></section>
+          <section v-if="e.pendingImport" class="import-review" aria-label="JSON読込の確認"><p>{{ e.pendingImport.name }} — 検証済み。演出 {{ e.pendingImport.project.transitions.length }} 件、スライド {{ e.pendingImport.project.slides.length }} 件を追加します。</p><p>既存の演出とスライドを残して末尾に追加します。同じIDは自動調整し、追加は「元に戻す」で取り消せます。</p><div class="editor-actions"><button @click="applyImport">このJSONを追加</button><button @click="e.pendingImport = null">キャンセル</button></div></section>
           <p v-if="e.error" class="input-warning" role="alert">{{ e.error }}</p>
         </section>
         <section v-if="tool === 'help'" aria-label="操作ガイド">
           <ol><li>左のレイヤーで図形またはグループを選びます。</li><li>中央の「見た目を編集」で形・配置・色を調整します。</li><li>「動きを編集」で明示的にキーを追加し、下のタイムラインで時刻を調整します。</li><li>右のプレビューで再生し、「スライドに割当」から発表に使います。</li></ol>
           <p>図形本体をドラッグすると移動、四隅で一様拡縮、丸いハンドルで回転します。グループ全体は親の位置（金色の点）を基準に変形します。選択・再生・シークは履歴を増やしません。</p>
           <p>位置・倍率の直接キー編集には同時刻のX/Yキーが必要です。キーを選ばずにドラッグしてもキーは作成しません。Escで操作を取り消し、Ctrl/Cmd+Zで元に戻せます。</p>
-          <p>履歴は再読込・JSON適用・保存データ再取得でリセットされます。プレビューの表示サイズを変更すると、進行中の図形操作は取り消されます。</p>
+          <p>JSON読込は既存の作品へ追加し、「元に戻す」で取り消せます。履歴は再読込・保存データ再取得でリセットされます。プレビューの表示サイズを変更すると、進行中の図形操作は取り消されます。</p>
           <button type="button" @click="previewVisible = !previewVisible">{{ previewVisible ? 'GPU描画を停止' : 'GPU描画を再開' }}</button>
           <label class="development-select"><span class="field-label">開発用サンプル</span><select value="" @change="closeTool(); $emit('sample', $event.target.value)"><option disabled value="">検証画面を選ぶ</option><option value="phase2">Phase 2 · 時刻の評価</option><option value="phase1">Phase 1 · 図形の生成</option><option value="phase0">Phase 0 · 描画基盤</option></select></label>
         </section>

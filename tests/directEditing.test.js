@@ -8,10 +8,11 @@ import { applyDirectValues, assertDirectEdit, directContext, directValues, dragg
 import { addKey, displayContext } from '../src/editor/displayValues.js'
 import { createProjectHistory } from '../src/editor/projectHistory.js'
 import { useEditor } from '../src/editor/useEditor.js'
+import { STORAGE_KEY } from '../src/editor/projectStorage.js'
 const near = (a,b) => assert.ok(Math.abs(a-b)<1e-7, `${a} != ${b}`)
 const fixture = () => { const project=createProject();return { project, t:project.transitions[0], selection:{layerId:'group-001',itemId:'item-002'} } }
-function editorHost() {
-  const previous=globalThis.window, values=new Map(), listeners=new Map()
+function editorHost(storedText) {
+  const previous=globalThis.window, values=new Map(storedText === undefined ? [] : [[STORAGE_KEY, storedText]]), listeners=new Map()
   globalThis.window={localStorage:{getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)},
     addEventListener:(type,fn)=>listeners.set(type,fn),removeEventListener:type=>listeners.delete(type)}
   const renderer=createRenderer({createComment:()=>({}),insert(){},remove(){},parentNode:()=>null,nextSibling:()=>null})
@@ -121,13 +122,20 @@ test('Editor: 連続ドラッグを一履歴へまとめ、Undo/RedoしたProjec
  }finally{host.dispose()}
 })
 
-test('Editor: キャンセル・pagehideは確定前へ戻し、Importで履歴をリセット',async()=>{
+test('Editor: キャンセル・pagehideは確定前へ戻し、JSON追加は既存の履歴を保って取り消せる',async()=>{
  const host=editorHost(),e=host.e
  try{
   const before=serializeProject(e.project);e.beginGesture();e.updateGesture(p=>{p.transitions[0].name='dragging'});e.cancelGesture();assert.equal(serializeProject(e.project),before);assert.equal(e.canUndo,false)
   e.beginGesture();e.updateGesture(p=>{p.transitions[0].name='unconfirmed'});host.listeners.get('pagehide')();assert.equal(serializeProject(e.project),before)
   e.commit(p=>{p.transitions[0].name='confirmed'});assert.equal(e.canUndo,true)
-  await e.prepareImport({name:'test.json',text:async()=>before});e.applyImport();assert.equal(e.canUndo,false);assert.equal(e.canRedo,false)
+  const confirmed=serializeProject(e.project)
+  await e.prepareImport({name:'test.json',text:async()=>before});assert.equal(serializeProject(e.project),confirmed)
+  assert.equal(e.applyImport(),true);assert.equal(e.canUndo,true);assert.equal(e.canRedo,false)
+  assert.equal(e.project.transitions.length,2);assert.equal(e.project.transitions[0].name,'confirmed');assert.equal(e.historyState.undoCount,2)
+  const added=serializeProject(e.project);e.flush();assert.equal(host.values.get(STORAGE_KEY),added)
+  e.undo();assert.equal(serializeProject(e.project),confirmed);e.flush();assert.equal(host.values.get(STORAGE_KEY),confirmed)
+  e.redo();assert.equal(serializeProject(e.project),added)
+  e.undo();e.undo();assert.equal(serializeProject(e.project),before);assert.equal(e.canUndo,false)
   assert.equal(e.gestureActive,false);await nextTick()
  }finally{host.dispose()}
 })
@@ -159,5 +167,33 @@ test('Editor: 前の入力欄の遅いblurで、次のドラッグの履歴単�
   e.updateGesture(project=>{project.transitions[0].layers[1].generator.stepX=200})
   e.endGesture(current);assert.equal(e.gestureActive,false);assert.equal(e.historyState.undoCount,2)
   e.undo();assert.equal(e.project.transitions[0].name,'typed');assert.notEqual(e.project.transitions[0].layers[1].generator.stepX,200)
+ }finally{host.dispose()}
+})
+
+
+test('Editor: 不正JSON・追加の失敗・空の読込は作品と履歴と選択時刻を壊さない',async()=>{
+ const host=editorHost(),e=host.e
+ try{
+  e.selectLayer('group-001','item-002');e.seek(600)
+  const before=serializeProject(e.project),selection={...e.selection}
+  await e.prepareImport({name:'bad.json',text:async()=>'{'});assert.equal(e.pendingImport,null);assert.equal(e.applyImport(),false)
+  assert.equal(serializeProject(e.project),before);assert.equal(e.historyState.undoCount,0)
+  await e.prepareImport({name:'changed.json',text:async()=>before});e.pendingImport.project.transitions[0].durationMs=-1
+  assert.equal(e.applyImport(),false);assert.ok(e.error);assert.ok(e.pendingImport);assert.equal(serializeProject(e.project),before)
+  await e.prepareImport({name:'empty.json',text:async()=>JSON.stringify({schemaVersion:1,transitions:[],slides:[]})})
+  assert.equal(e.applyImport(),true);assert.equal(e.pendingImport,null)
+  assert.equal(serializeProject(e.project),before);assert.equal(e.historyState.undoCount,0)
+  assert.deepEqual(e.selection,selection);assert.equal(e.timeMs,600)
+ }finally{host.dispose()}
+})
+
+test('Editor: 保存データの復元失敗時は、JSON追加でも元の保存値の保護を解除しない',async()=>{
+ const damaged='{damaged storage',host=editorHost(damaged),e=host.e
+ try{
+  const before=serializeProject(e.project);assert.equal(e.storageBlocked,true)
+  await e.prepareImport({name:'add.json',text:async()=>before});assert.equal(e.applyImport(),true)
+  assert.equal(e.project.transitions.length,2);assert.equal(e.storageBlocked,true)
+  e.flush();assert.equal(host.values.get(STORAGE_KEY),damaged)
+  e.undo();assert.equal(serializeProject(e.project),before);e.flush();assert.equal(host.values.get(STORAGE_KEY),damaged)
  }finally{host.dispose()}
 })

@@ -107,7 +107,7 @@ const reports = await Promise.all(filenames.map(async filename => {
   const phase = Number(filename.match(/\d+/)[0])
   const title = markdown.split('\n')[0].replace(/^# /, '')
   const date = markdown.match(/確認日:\s*(\d{4}-\d{2}-\d{2})/)?.[1] ?? '記載なし'
-  const tests = markdown.match(/\*\*(\d+)件成功/)?.[1] ?? '—'
+  const tests = [...markdown.matchAll(/\*\*(\d+)件成功/g)].at(-1)?.[1] ?? '—'
   const build = /`npm run build`:\s*\*\*成功/.test(markdown) ? '成功' : '原本参照'
   return { phase, filename, title, date, tests, build, ...descriptions[phase], ...renderMarkdown(markdown, phase) }
 }))

@@ -136,15 +136,15 @@
 <a href="#phase-3"><span>03</span> 編集・再生・保存</a>
 <a href="#phase-4"><span>04</span> スライド間の演出</a>
 <a href="#phase-5"><span>05</span> 直接操作と取り消し</a><a href="#phase-6"><span>06</span> Phase 6 · 未着手</a><a href="#usage"><span>?</span> このレポートについて</a></nav>
-      <div class="sidebar-bottom">収録範囲 Phase 0–5<br />記録の最新確認日 2026-11-20<a href="../README.md">READMEを見る ↗</a></div>
+      <div class="sidebar-bottom">収録範囲 Phase 0–5<br />記録の最新確認日 2026-11-21<a href="../README.md">READMEを見る ↗</a></div>
     </aside>
     <main id="overview">
       <div class="topbar"><span>ENGINEERING REPORT / PHASE 0–5</span><button type="button" id="print-report">印刷 / PDF保存</button></div>
       <header class="hero"><p class="eyebrow">GENERATIVE SLIDE SYSTEM</p><h1>実装・検証レポート</h1>
         <p class="lead">四角形を描く基盤から、規則に基づく生成、時刻からのアニメーション評価、編集・保存まで。各Phaseの実装内容・設計判断・検証結果・引き継ぎ事項をまとめています。</p>
-        <div class="hero-metrics"><span><b>Phase 5</b> まで実装</span><span><b>98</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
+        <div class="hero-metrics"><span><b>Phase 5</b> まで実装</span><span><b>105</b> 最新記録のテスト成功数</span><span><b>WebGPU</b> / WebGL 2で確認</span></div>
       </header>
-      <a class="ux-review-link" href="#ui-ux-implementation">UI / UX改善の実装結果を見る → 小型プレビューとスクロールしない編集画面</a>
+      <a class="ux-review-link" href="#json-import-append">JSON読込の変更を見る → 既存作品を残して末尾へ追加（2026-11-21）</a>
       <section aria-labelledby="progress-title"><div class="section-heading"><h2 id="progress-title">ここまでの実装</h2><span>各カードから全文へ移動できます</span></div><div class="phase-cards"><a class="phase-card" href="#phase-0">
   <span class="phase-label">PHASE 00</span><h3>描画基盤</h3>
   <p>VueとThree.jsをつなぎ、四角形を描画。入力・リサイズ・GPUの後始末を確認。</p>
@@ -168,7 +168,7 @@
 <a class="phase-card" href="#phase-5">
   <span class="phase-label">PHASE 05</span><h3>直接操作と取り消し</h3>
   <p>図形の選択・移動・回転・拡縮、キーのドラッグ、Undo/Redo。一つの操作を一つの履歴にまとめる。</p>
-  <div class="card-meta"><span><b>98</b> テスト成功</span><span>詳細へ ↗</span></div></a></div></section>
+  <div class="card-meta"><span><b>105</b> テスト成功</span><span>詳細へ ↗</span></div></a></div></section>
       <p class="overview-note">各Phaseの本文は、そのPhaseを完了した時点の記録です。「未実装」「次Phase」は当時の状態を示します。スライダー入力のレビュー対応も収録しています。</p>
       <section class="validation" aria-labelledby="validation-title"><div class="section-heading"><h2 id="validation-title">検証結果の一覧</h2><span>Markdown原本の記録値</span></div>
         <table><thead><tr><th scope="col">Phase</th><th scope="col">テスト</th><th scope="col">ビルド</th><th scope="col">確認日</th></tr></thead><tbody><tr><th scope="row">Phase 0</th><td>18件成功</td><td><span class="success">成功</span></td><td>2026-11-18</td></tr>
@@ -176,7 +176,7 @@
 <tr><th scope="row">Phase 2</th><td>54件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
 <tr><th scope="row">Phase 3</th><td>67件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
 <tr><th scope="row">Phase 4</th><td>82件成功</td><td><span class="success">成功</span></td><td>2026-11-19</td></tr>
-<tr><th scope="row">Phase 5</th><td>98件成功</td><td><span class="success">成功</span></td><td>2026-11-20</td></tr></tbody></table>
+<tr><th scope="row">Phase 5</th><td>105件成功</td><td><span class="success">成功</span></td><td>2026-11-21</td></tr></tbody></table>
         <p>テスト数は各Phase時点の累計です。今回は原本のHTML化を行い、過去の検証を再実施したものではありません。未検証事項・警告は各Phase本文に記載しています。</p>
       </section>
       <section id="upcoming" class="upcoming" aria-labelledby="upcoming-title"><div class="section-heading"><h2 id="upcoming-title">今後のPhase</h2><span>本文は実装後に追記</span></div><div id="phase-6" class="planned-phase"><div><p class="phase-label">PHASE 06</p><h3>Generator / Modifier・表現力の拡張（任意）</h3></div><span class="planned-status">未着手</span></div></section>
@@ -891,9 +891,9 @@ npm run preview -- --host 127.0.0.1</code></pre>
   <header class="report-header"><div><p class="phase-label">PHASE 05 / IMPLEMENTATION RECORD</p>
   <h2 id="phase-5-title">直接操作と取り消し<span>実装・検証記録</span></h2></div>
   <a class="source-link" href="phases/phase-5-result.md">Markdown原本 ↗</a></header>
-  <div class="report-meta"><span>確認日 <time datetime="2026-11-20">2026-11-20</time></span><span>テスト <b>98件成功</b></span><span>ビルド <b>成功</b></span></div>
-  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li><li><a href="#phase-5-section-14">UI / UX 改善検討 — 2026-11-20・実装前の記録</a></li><li><a href="#phase-5-section-21">UI / UX改善の実装 — UI-UX-01・2026-11-20</a></li></ul></details>
-  <div class="record-body"><p>確認日: 2026-11-20（初回実装の確認は2026-11-19）。Phase 5で停止し、Phase 6には進んでいません。</p>
+  <div class="report-meta"><span>確認日 <time datetime="2026-11-21">2026-11-21</time></span><span>テスト <b>105件成功</b></span><span>ビルド <b>成功</b></span></div>
+  <details class="section-index"><summary>このPhaseの目次</summary><ul><li><a href="#phase-5-section-0">作業前のコミットと今回の範囲</a></li><li><a href="#phase-5-section-1">実装した機能と操作方法</a></li><li><a href="#phase-5-section-2">意匠ライブラリ: 5パターン</a></li><li><a href="#phase-5-section-3">座標変換とHit Test</a></li><li><a href="#phase-5-section-4">親の逆変換と画面値の書き戻し</a></li><li><a href="#phase-5-section-5">明示的なキー選択とタイムライン</a></li><li><a href="#phase-5-section-6">Undo/Redoの履歴と保存</a></li><li><a href="#phase-5-section-7">処理フローとGPUへの影響</a></li><li><a href="#phase-5-section-8">追加・変更したファイル</a></li><li><a href="#phase-5-section-9">自動テストとビルド結果</a></li><li><a href="#phase-5-section-10">実ブラウザの検証結果</a></li><li><a href="#phase-5-section-11">動作確認の手順と実行場所</a></li><li><a href="#phase-5-section-12">既知の制約と次工程への引き継ぎ</a></li><li><a href="#phase-5-section-13">完了条件</a></li><li><a href="#phase-5-section-14">UI / UX 改善検討 — 2026-11-20・実装前の記録</a></li><li><a href="#phase-5-section-21">UI / UX改善の実装 — UI-UX-01・2026-11-20</a></li><li><a href="#phase-5-section-28">JSON読込を既存作品への追加方式へ変更 — 2026-11-21</a></li></ul></details>
+  <div class="record-body"><p>確認日: 2026-11-21（初回実装の確認は2026-11-19、UI配置改善は2026-11-20）。Phase 5で停止し、Phase 6には進んでいません。</p>
 <h3 id="phase-5-section-0">作業前のコミットと今回の範囲</h3>
 <p>承認済みのPhase 4、発表構成とEditorプレビューの連動、cover廃止、設計・仕様・実装記録を <code>5dd86f9</code>（feat: complete Phase 4 presentation and remove cover restrictions）にコミットしました。Phase 5の変更はレビュー用に未コミットで残しています。</p>
 <p>今回はプレビュー直接操作、キー時刻のドラッグ、Undo/Redoを追加しました。Generatorや描画方式の追加、Phase 6のRadial / Random / Path、自由頂点編集は実装していません。</p>
@@ -1252,7 +1252,51 @@ npm run docs:report</code></pre>
 <li>共通の形や多数の規則・キーなど、項目が多い編集欄では内部スクロールが残ります。通常の位置・回転・倍率は1366×768で一覧の内部スクロールなしに収まります。</li>
 <li>小型プレビューで細かい図形やハンドルが密集するときは、拡大またはレイヤー選択・数値入力を使います。ズーム・パンや新しい変形方法は追加していません。</li>
 <li>Safari・Firefox、実機のタッチ・ペン、ブラウザの大きな文字拡大は未検証です。</li>
-<li>Phase 6へは進んでいません。</li></ul></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
+<li>Phase 6へは進んでいません。</li></ul>
+<div id="json-import-append"></div>
+<h3 id="phase-5-section-28">JSON読込を既存作品への追加方式へ変更 — 2026-11-21</h3>
+<h4 id="phase-5-section-29">変更理由と新しい動作</h4>
+<p>ユーザーから「JSONを読み込むと既存が消える。追加形式にしたい」と指示を受け、読込の確定処理を変更しました。以前はProject全体を読込内容で置き換えていました。今後は既存の演出・レイヤー・スライドを保持し、読込ファイルの演出とスライドをそれぞれの末尾へ追加します。Phase 5までの保存・編集操作の修正であり、Phase 6へは進んでいません。</p>
+<p>「ファイル → JSON読込」でファイルを選ぶと、追加予定の演出・スライドの件数を表示します。「このJSONを追加」で確定し、キャンセルや確認画面を閉じただけでは作品を変更しません。確認待ちは従来どおり画面下部から再開できます。</p>
+<p>追加全体を履歴1操作として記録し、「元に戻す」で追加分を取り消し、「やり直す」で再追加できます。読込前の履歴も保持します。演出が含まれるときは最初に追加した演出を選択しますが、既存作品は演出選択欄とスライド割当画面に残ります。演出のないスライドだけの追加や、空のJSONでは編集中の演出・時刻を維持します。</p>
+<h4 id="phase-5-section-30">IDと参照・保存の扱い</h4>
+<ul><li>Transition・Layer・SlideのIDはProject全体で一意です。取り込み側のIDが衝突した場合だけ、新しいIDを割り当てます。衝突していないIDは維持します。</li>
+<li>取り込み側の全IDも採番前に予約し、衝突解消でファイル内の別のIDを奪わないようにします。</li>
+<li>追加スライドの <code>transitionId</code> は、追加された演出の新しいIDへ対応させます。既存スライドの設定と並び順は変更しません。</li>
+<li>Group内の <code>item-xxx</code>、Override、Child・Individualのキー、旧coverを含む演出データを保持します。入力ファイルのデータも変更しません。</li>
+<li>追加処理は既存の編集トランザクションを使います。入力と合成後のProjectの検証に成功した場合だけ確定し、失敗時は一部も反映しません。UIは失敗理由と確認画面を保持します。</li>
+<li>追加後、Undo後、Redo後のProjectはいずれも通常の自動保存対象です。保存データの復元失敗で上書きを保留している場合は、その保護をJSON追加だけで解除しません。</li></ul>
+<p>描画処理は従来どおり、選択した演出と時刻から図形を評価してRendererへ渡します。GPUの初期化・描画方式・座標変換は変更していません。保存形式と依存パッケージにも変更はありません。</p>
+<h4 id="phase-5-section-31">追加・変更したファイル</h4>
+<div class="table-scroll" tabindex="0" role="region" aria-label="追加・変更したファイル"><table><thead><tr><th scope="col">ファイル</th><th scope="col">内容</th></tr></thead><tbody><tr><td><code>src/domain/project/project.js</code></td><td>追加用の <code>appendProject</code>。ID予約・衝突解消・スライドの参照対応</td></tr>
+<tr><td><code>src/editor/useEditor.js</code></td><td>Projectの置き換えを追加処理へ変更。通常の編集履歴と保存へ接続</td></tr>
+<tr><td><code>src/editor/EditorView.vue</code></td><td>「このJSONを追加」と既存作品保持の説明。失敗時は確認画面を維持。ガイドも追加方式へ変更</td></tr>
+<tr><td><code>tests/projectImport.test.js</code></td><td>保持・参照・描画一致、異種ID衝突、繰り返し追加、不正データ、空とスライド単独の5件</td></tr>
+<tr><td><code>tests/directEditing.test.js</code></td><td>追加のUndo/Redo・既存履歴・保存の回帰確認を更新。失敗時の不変性と保護された保存値の維持を2件追加</td></tr>
+<tr><td><code>README.md</code>, <code>docs/DESIGN.md</code>, <code>docs/SPECIFICATION.md</code>, <code>docs/phases/phase-5.md</code></td><td>追加方式と履歴保持を現行の仕様として反映</td></tr>
+<tr><td><code>docs/phases/phase-5-result.md</code>, <code>docs/implementation-report.html</code></td><td>今回の実装原本と生成したHTML。以前の置換・履歴リセットに関する記述は当時の記録として残す</td></tr>
+<tr><td><code>scripts/build-implementation-report.mjs</code>, <code>scripts/implementation-report.template.html</code></td><td>最新の追記のテスト件数を概要へ反映し、今回の変更への入口を追加</td></tr></tbody></table></div>
+<h4 id="phase-5-section-32">確認手順と結果</h4>
+<p>実行場所はすべて<strong>リポジトリのルート</strong>です。</p>
+<pre aria-label="sh"><code>npm test
+npm run build
+npm run preview -- --host 127.0.0.1
+npm run docs:report</code></pre>
+<ol><li>既存の作品で演出名や図形を編集し、JSONを書き出します。</li>
+<li>「ファイル → JSON読込」でそのJSONを選び、追加件数と説明を確認します。キャンセル時に作品が変わらないことも確認します。</li>
+<li>「このJSONを追加」で確定。既存の演出とスライドが残り、追加分が末尾にあることを確認します。</li>
+<li>「元に戻す」で追加分だけが消え、「やり直す」で復帰することを確認します。</li>
+<li>同じJSONを再度追加し、ID重複が起きず、スライドが追加された演出を参照して再生できることを確認します。</li>
+<li>JSON出力とページ再読込でも、既存と追加後の両方を保持することを確認します。</li></ol>
+<ul><li><code>npm test</code>：<strong>105件成功</strong>。既存98件を含み、追加方式の重要な境界を7件追加して確認しました。</li>
+<li><code>npm run build</code>：<strong>成功</strong>。67 modules、JS約1017 kB、gzip約290 kB。従来からの500 kB超のチャンク警告は残っています。</li>
+<li>本番版Chrome、WebGPU / WebGL2で確認：追加前の確認とキャンセル、確認待ちの再開、既存作品と履歴の保持、IDと演出参照の対応、Undo/Redo、同じJSONの繰り返し追加、JSON出力、再読込、不正JSON時の保護が成功。</li>
+<li>既存と追加したスライドを実際に発表モードで再生し、追加された演出の再生とEditorへの復帰を確認。1366×768でページの縦横スクロールなし、未処理のページ例外0件。</li>
+<li><code>npm run docs:report</code>、生成スクリプトの構文確認、<code>git diff --check</code>：成功。HTMLを直接開き、最新105件の集計、今回の変更へのリンク、全6 Phaseの見出し・表・コード・チェック項目の保持、アンカーの一意性、390px表示、印刷ボタンとPDF生成を確認。ページ例外・HTTP通信0件。</li>
+<li>ブラウザの確認は一時ディレクトリの既存Playwright環境を使い、実ユーザーのブラウザ保存領域にはアクセスしていません。Safari・Firefox、巨大なJSONでの性能・実機タッチ操作は未検証です。</li></ul>
+<h4 id="phase-5-section-33">制約と既存の作品について</h4>
+<p>同じJSONを繰り返し読み込むと、それぞれ別のコピーとして追加します。同じ名前も保持するため、必要に応じて演出設定で名前を変更できます。保存容量や履歴件数の上限は従来どおりです。</p>
+<p>この修正は今後の読込で既存作品を保持するためのものです。以前の方式ですでに置き換えられ、保存済みの過去作品を自動復元する機能は含みません。以前に書き出したJSONがあれば、新しい追加方式で取り込めます。</p></div><a class="back-top" href="#overview">↑ 全体概要へ戻る</a></article>
       <section id="usage" class="usage" aria-labelledby="usage-title"><h2 id="usage-title">このレポートについて</h2>
         <p><code>docs/phases/phase-*-result.md</code> を原本として生成したHTML版です。本文はすべてこのファイルに含まれ、インターネット接続や開発サーバーなしで閲覧できます。Markdown原本・README・公式資料へのリンクは、移動先のファイルまたは通信が必要です。</p>
         <p>実画面の画像は同じフォルダーの <code>ui-ux-editor.png</code> を参照します。画像も一緒に保管してください。</p>

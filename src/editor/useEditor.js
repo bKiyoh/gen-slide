@@ -1,5 +1,5 @@
 import { computed, onUnmounted, reactive, ref, shallowRef, watch } from 'vue'
-import { applyProjectEdit, createTransition, duplicateTransition, nextId, parseProject, serializeProject } from '../domain/project/project.js'
+import { appendProject, applyProjectEdit, createTransition, duplicateTransition, nextId, parseProject, serializeProject } from '../domain/project/project.js'
 import { createInitialProject } from '../domain/project/presentationSample.js'
 import { createSampleShapes } from '../domain/shapes.js'
 import { createSampleTransition } from '../domain/transition/sampleTransition.js'
@@ -193,15 +193,13 @@ export function useEditor(initialProject) {
     catch (exception) { pendingImport.value = null; error.value = `JSONを読み込めません: ${exception.message}` }
   }
   function applyImport() {
-    if (!pendingImport.value) return
-    cancelGesture(); clock.stop()
-    project.value = pendingImport.value.project
+    if (!pendingImport.value) return false
+    endGesture()
+    let ids
+    if (!commit(draft => { ids = appendProject(draft, pendingImport.value.project) })) return false
     pendingImport.value = null
-    storageBlocked.value = false
-    persistence.unblock(project.value)
-    selectTransition(project.value.transitions[0]?.id ?? '')
-    error.value = ''
-    history.clear(); historyState.value = history.state()
+    if (ids.length) selectTransition(ids[0])
+    return true
   }
   function exportProject() {
     const url = URL.createObjectURL(new Blob([serializeProject(project.value)], { type: 'application/json' }))
